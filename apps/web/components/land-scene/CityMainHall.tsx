@@ -46,7 +46,7 @@ export function CityCivicHouse({
   h,
   tint,
   look,
-}: CityCivicHousePlacement) {
+}: Omit<CityCivicHousePlacement, "id">) {
   return (
     <CityStreetHouse
       x={x}

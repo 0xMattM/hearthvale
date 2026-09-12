@@ -29,7 +29,7 @@ export function CityStreetHouse({
   h,
   tint,
   look,
-}: CityCivicHousePlacement) {
+}: Omit<CityCivicHousePlacement, "id">) {
   const palette = cityCivicHousePalette(tint);
   const cachePrefix = `street-${tint}-${look}`;
   const front = d / 2;
