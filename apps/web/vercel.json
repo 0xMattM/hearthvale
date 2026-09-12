@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "installCommand": "cd ../.. && npm ci"
+  "installCommand": "npm ci --prefix ..",
+  "buildCommand": "npm --prefix .. run build -w @game/shared && next build"
 }
