@@ -1,0 +1,15 @@
+{
+  "chainId": 102031,
+  "rpcUrl": "https://rpc.cc3-testnet.creditcoin.network",
+  "explorer": "https://creditcoin-testnet.blockscout.com",
+  "deployer": "0xb336B641CEb060bA403f9eb7bA5A00e1d3F35fe7",
+  "contracts": {
+    "RealmToken": "0x8ebd21b2934dBF67F7a09A6feB61bB05a31Ed36A",
+    "LandNFT": "0x843Da5c71F3703ea2Ec4220B2Ca4b5F948ba6769",
+    "ItemMarketplace": "0x3c536377f9dAF9F8a0FA1BAcb020C174e65466c7",
+    "EvmV1Decoder": "0x688F65363F22058E0cb89c90bA3EA5566cFF9e50",
+    "RealmMinterASC": "0x7DA68C1C7775256b96D992167A057941BB964602"
+  },
+  "deployedAt": "2026-09-02T18:19:58.686Z",
+  "lastUpdated": "2026-09-11T16:31:41.104Z"
+}

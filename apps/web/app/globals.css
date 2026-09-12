@@ -1,0 +1,4158 @@
+:root {
+  color-scheme: dark;
+  --bg: #1a2118;
+  --panel: #243022;
+  --text: #e8f0e2;
+  --muted: #9aab90;
+  --accent: #c4a35a;
+  --ok: #6fbf73;
+  --danger: #d9776f;
+  font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #2a3826, var(--bg));
+  color: var(--text);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid #4a5d42;
+  background: #31402c;
+  color: var(--text);
+  border-radius: 6px;
+  padding: 0.45rem 0.8rem;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+input {
+  border: 1px solid #4a5d42;
+  background: #1b2419;
+  color: var(--text);
+  border-radius: 6px;
+  padding: 0.45rem 0.7rem;
+}
+
+.panel {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--panel) 88%, #3a4b36) 0%,
+      color-mix(in srgb, var(--panel) 94%, black) 100%
+    );
+  border: 1px solid #4a5d42;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(232, 240, 226, 0.08);
+}
+
+.panel h3 {
+  letter-spacing: 0.02em;
+}
+
+.inventory-panel__header button,
+.craft-panel__header button,
+.build-panel__header button,
+.vendor-panel__header button,
+.market-panel__header button,
+.travel-panel__header button,
+.decor-panel__header button,
+.mail-panel__header button,
+.trade-panel__header button,
+.quest-panel__header button,
+.guild-panel__header button,
+.notice-panel__header button,
+.settings-panel__header button,
+.deed-panel__header button,
+.creditcoin-panel__header button,
+.visit-panel__header button,
+.plant-panel__header button,
+.chat-panel__header button,
+.achievements-panel__header button,
+.tutorial-npc-panel__header button,
+.arena-stub-panel__header button {
+  padding: 0.28rem 0.6rem;
+  font-size: 0.78rem;
+  background: color-mix(in srgb, var(--panel) 70%, black);
+}
+
+/* PL2.1 — action-first walk-up prompt; lean chrome (not .panel). */
+.interact-prompt__chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem 0.35rem 0.35rem;
+  background: rgba(14, 20, 12, 0.58);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, #3a4b36);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.interact-prompt__key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.55rem;
+  height: 1.55rem;
+  padding: 0 0.3rem;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  color: #1a2118;
+  background: var(--accent);
+  border-radius: 5px;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.interact-prompt__copy {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.interact-prompt__prefix {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.interact-prompt__detail {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.82rem;
+}
+
+.interact-prompt__prefix::after {
+  content: "·";
+  margin-left: 0.35rem;
+  opacity: 0.7;
+}
+
+.interact-prompt__verb {
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+/* PL6.2 — brief success pulse on walk-up prompt (plant/harvest). */
+@keyframes interact-prompt-success-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+  }
+  40% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ok) 55%, transparent);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+  }
+}
+
+.interact-prompt--success .interact-prompt__chip {
+  animation: interact-prompt-success-pulse 0.4s ease-out;
+  border-color: color-mix(in srgb, var(--ok) 55%, #3a4b36);
+}
+
+/* PL188.1 — quiet periodic interact-prompt chrome breath while in range (no panel). */
+@keyframes interact-prompt-idle-glance {
+  0%,
+  100% {
+    opacity: 0.9;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+    border-color: color-mix(in srgb, var(--accent) 45%, #3a4b36);
+  }
+  50% {
+    opacity: 1;
+    box-shadow:
+      0 2px 10px rgba(0, 0, 0, 0.28),
+      0 0 0 1px color-mix(in srgb, var(--accent) 32%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 62%, #3a4b36);
+  }
+}
+
+.interact-prompt--idle-glance .interact-prompt__chip {
+  animation: interact-prompt-idle-glance
+    var(--interact-prompt-idle-period, 5200ms) ease-in-out infinite;
+}
+
+/* PL6.2 / HUD-ACTION-CUE-1 — one short-lived TopBar line (not a toast stack). */
+@keyframes hud-success-cue-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hud-success-cue {
+  animation: hud-success-cue-in 0.2s ease-out;
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 8px;
+  max-width: 16rem;
+  color: color-mix(in srgb, var(--ok) 70%, #f4f8e8);
+  background: rgba(48, 72, 40, 0.72);
+  border: 1px solid rgba(120, 168, 96, 0.45);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+}
+
+.hud-top {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.hud-vitals {
+  pointer-events: none;
+  min-width: 220px;
+  padding: 8px 10px 8px 12px;
+  background: rgba(16, 22, 14, 0.72);
+  border: 1px solid #3a4b36;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+}
+
+.hud-vitals[data-energy-low="true"],
+.hud-vitals[data-health-low="true"] {
+  border-color: color-mix(in srgb, var(--danger) 45%, #3a4b36);
+}
+
+.hud-vitals__who {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+
+.hud-vitals__lv {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.hud-vitals__coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  color: var(--accent);
+  font-size: 0.82rem;
+}
+
+.hud-coin {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 35% 30%, #f0d78a, var(--accent) 58%, #8a6a28);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.hud-meters {
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+  min-width: 168px;
+}
+
+.hud-meter {
+  display: grid;
+  grid-template-columns: 8px 1fr 2.1rem;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-meter__pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--muted);
+}
+
+.hud-meter--health .hud-meter__pip {
+  background: #d9776f;
+}
+
+.hud-meter--energy .hud-meter__pip {
+  background: #6fbf73;
+}
+
+.hud-meter--tool .hud-meter__pip {
+  background: var(--accent);
+}
+
+.hud-meter__track {
+  height: 7px;
+  border-radius: 999px;
+  background: #1b2419;
+  overflow: hidden;
+}
+
+.hud-meter__fill {
+  display: block;
+  height: 100%;
+}
+
+.hud-meter__value {
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  text-align: right;
+}
+
+.hud-meter[data-low="true"] .hud-meter__value {
+  color: color-mix(in srgb, var(--danger) 70%, var(--accent));
+  font-weight: 600;
+}
+
+.hud-glance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(12, 18, 14, 0.55);
+  line-height: 1.2;
+}
+
+.hud-glance kbd {
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.hud-glance__n {
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+.hud-vitals__visit {
+  color: var(--accent);
+  font-size: 0.78rem;
+  margin-top: 4px;
+}
+
+.hud-vitals__visit span {
+  display: block;
+  font-size: 0.72rem;
+  opacity: 0.85;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.hud-vitals__quiet {
+  font-size: 0.65rem;
+  margin-top: 4px;
+  opacity: 0.72;
+  color: var(--muted);
+}
+
+.hud-vitals__error {
+  color: var(--danger);
+  font-size: 0.78rem;
+  margin-top: 4px;
+}
+
+.hud-vitals__info {
+  color: var(--ok);
+  font-size: 0.78rem;
+  margin-top: 4px;
+}
+
+.hud-top__actions {
+  pointer-events: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.hud-hotkeys {
+  display: flex;
+  gap: 4px;
+  padding: 5px 7px;
+  background: rgba(16, 22, 14, 0.65);
+  border: 1px solid #3a4b36;
+  border-radius: 8px;
+}
+
+.hud-hotkeys kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.28rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text);
+  background: color-mix(in srgb, var(--panel) 70%, black);
+  border: 1px solid #4a5d42;
+  border-radius: 4px;
+}
+
+.hud-ghost-btn {
+  opacity: 0.78;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.75rem;
+}
+
+/* PL9.1 — soft low-energy meter cue (in-place; not a toast). */
+.topbar-energy-meter--low {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger) 35%, transparent);
+}
+
+/* PL188.2 — quiet periodic energy-meter breath while walking healthy (no panel). */
+@keyframes topbar-energy-meter-idle-glance {
+  0%,
+  100% {
+    box-shadow: none;
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, #6fbf73 28%, transparent);
+    filter: brightness(1.08);
+  }
+}
+
+.topbar-energy-meter--idle-glance {
+  animation: topbar-energy-meter-idle-glance
+    var(--energy-meter-idle-period, 5600ms) ease-in-out infinite;
+}
+
+/* PL198.1 — quiet periodic HP readout breath while walking healthy (no panel). */
+@keyframes topbar-health-meter-idle-glance {
+  0%,
+  100% {
+    opacity: 1;
+    text-shadow: none;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 6px color-mix(in srgb, #c07088 32%, transparent);
+    filter: brightness(1.12);
+  }
+}
+
+.topbar-health-meter--idle-glance {
+  animation: topbar-health-meter-idle-glance
+    var(--health-meter-idle-period, 6400ms) ease-in-out infinite;
+}
+
+/* PL14.1 — quiet current-map chip (single status; not a dashboard column). */
+.topbar-map-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(12, 18, 14, 0.55);
+  line-height: 1.2;
+  opacity: 0.92;
+}
+
+.topbar-map-chip__glyph {
+  font-size: 0.62rem;
+  opacity: 0.85;
+}
+
+.topbar-realm-chip {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.35rem;
+  padding: 1px 7px;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  color: #d4b56a;
+  background: color-mix(in srgb, #d4b56a 14%, rgba(12, 18, 14, 0.55));
+  border: 1px solid color-mix(in srgb, #d4b56a 40%, #3a4b36);
+  border-radius: 999px;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+}
+
+/* PL40.2 — brief map-identity chip pulse on successful free travel arrive. */
+@keyframes topbar-map-chip-arrive-pulse {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 50%, transparent);
+    transform: scale(1.08);
+    background: color-mix(in srgb, currentColor 22%, rgba(12, 18, 14, 0.55));
+  }
+  100% {
+    opacity: 0.92;
+    box-shadow: none;
+    transform: scale(1);
+    background: rgba(12, 18, 14, 0.55);
+  }
+}
+
+.topbar-map-chip--arrive-pulse {
+  animation: topbar-map-chip-arrive-pulse 0.45s ease-out;
+}
+
+/* PL185.2 — quiet periodic map-chip breath while walking (no panel open). */
+@keyframes topbar-map-chip-idle-glance {
+  0%,
+  100% {
+    opacity: 0.88;
+    box-shadow: none;
+    background: rgba(12, 18, 14, 0.55);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 28%, transparent);
+    background: color-mix(in srgb, currentColor 12%, rgba(12, 18, 14, 0.55));
+  }
+}
+
+.topbar-map-chip--idle-glance {
+  animation: topbar-map-chip-idle-glance var(--map-chip-idle-period, 4800ms)
+    ease-in-out infinite;
+}
+
+/* PL133.1 — quiet L · Mail glance while pending parcels and Mail closed (not a column). */
+.topbar-mail-glance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(28, 24, 14, 0.55);
+  line-height: 1.2;
+  opacity: 0.92;
+}
+
+/* PL189.1 — quiet Q · Quest glance while claimable reward pending and Quest closed. */
+.topbar-quest-glance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(36, 40, 22, 0.55);
+  line-height: 1.2;
+  opacity: 0.92;
+}
+
+/* PL189.2 — quiet G · Invite glance while unanswered guild invite pending and Guild closed. */
+.topbar-guild-invite-glance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(22, 36, 44, 0.55);
+  line-height: 1.2;
+  opacity: 0.92;
+}
+
+/* PL195.1 — quiet T · Trade glance while incoming offer pending and Trade closed. */
+.topbar-trade-glance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(22, 40, 32, 0.55);
+  line-height: 1.2;
+  opacity: 0.92;
+}
+
+/* PL195.2 — quiet A · Unlock glance while new unlock pending and Achievements closed. */
+.topbar-achievements-glance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(36, 28, 44, 0.55);
+  line-height: 1.2;
+  opacity: 0.92;
+}
+
+/* PL197.1 — quiet C · Chat glance while unread chat/guild lines pending and Chat closed. */
+.topbar-chat-glance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(20, 40, 34, 0.55);
+  line-height: 1.2;
+  opacity: 0.92;
+}
+
+/* PL197.2 — quiet Notice glance while unread tip ids pending and Notice closed. */
+.topbar-notice-glance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(40, 34, 18, 0.55);
+  line-height: 1.2;
+  opacity: 0.92;
+}
+
+/* PL198.2 — quiet I · Bag glance breath after recent pickup while Inventory closed. */
+@keyframes topbar-inventory-pickup-idle-glance {
+  0%,
+  100% {
+    opacity: 0.88;
+    box-shadow: none;
+    background: rgba(28, 40, 22, 0.55);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 28%, transparent);
+    background: color-mix(in srgb, currentColor 12%, rgba(28, 40, 22, 0.55));
+  }
+}
+
+.topbar-inventory-pickup-glance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(28, 40, 22, 0.55);
+  line-height: 1.2;
+  opacity: 0.92;
+  animation: topbar-inventory-pickup-idle-glance
+    var(--inventory-pickup-idle-period, 7200ms) ease-in-out infinite;
+}
+
+/* PL199.2 — quiet E · Deliver glance while soft-war wood deliver ready. */
+.topbar-soft-war-deliver-glance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  background: rgba(40, 24, 16, 0.55);
+  line-height: 1.2;
+  opacity: 0.92;
+}
+
+/* PL9.2 / PL38.2 / PL46.1–PL46.2 / PL55.2 — brief inventory / settings / guild / achievements / deed open accent (same panels; no extra columns). */
+@keyframes inventory-open-accent-in {
+  0% {
+    border-color: color-mix(in srgb, var(--accent) 75%, #3a4b36);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  100% {
+    border-color: #3a4b36;
+    box-shadow: none;
+  }
+}
+
+.inventory-panel--open-accent,
+.settings-panel--open-accent,
+.guild-panel--open-accent,
+.achievements-panel--open-accent,
+.deed-panel--open-accent,
+.creditcoin-panel--open-accent {
+  animation: inventory-open-accent-in 0.45s ease-out;
+  border-color: color-mix(in srgb, var(--accent) 65%, #3a4b36);
+}
+
+.inventory-panel--open-accent .inventory-panel__header h3,
+.settings-panel--open-accent .settings-panel__header h3,
+.guild-panel--open-accent .guild-panel__header h3,
+.achievements-panel--open-accent .achievements-panel__header h3,
+.deed-panel--open-accent .deed-panel__header h3,
+.creditcoin-panel--open-accent .creditcoin-panel__header h3 {
+  color: var(--accent);
+}
+
+/* Creditcoin desk (B) — realm economy surface */
+.creditcoin-panel {
+  --ctc-gold: #d4b56a;
+  --ctc-ink: color-mix(in srgb, var(--panel) 55%, #0e140c);
+  scrollbar-width: thin;
+  scrollbar-color: #4a5d42 transparent;
+}
+
+.creditcoin-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.creditcoin-panel__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.creditcoin-panel__title-row h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.creditcoin-panel__key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.28rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #1a2118;
+  background: var(--accent);
+  border-radius: 5px;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.22);
+}
+
+.creditcoin-panel__lede {
+  margin: 0 0 0.65rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.creditcoin-panel__net {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.75rem;
+  padding: 0.22rem 0.55rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--muted) 85%, var(--accent));
+  background: color-mix(in srgb, var(--ctc-ink) 80%, transparent);
+  border: 1px solid #3a4b36;
+  border-radius: 999px;
+}
+
+.creditcoin-panel__net-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--ok) 55%, transparent);
+}
+
+.creditcoin-panel__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.7rem 0 0.15rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid color-mix(in srgb, #3a4b36 80%, transparent);
+}
+
+.creditcoin-panel__tab {
+  padding: 0.28rem 0.55rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+
+.creditcoin-panel__tab:hover:not(:disabled) {
+  color: var(--text);
+  border-color: color-mix(in srgb, #3a4b36 70%, transparent);
+}
+
+.creditcoin-panel__tab--active,
+.creditcoin-panel__tab[aria-selected="true"] {
+  color: var(--ctc-gold);
+  border-color: color-mix(in srgb, var(--ctc-gold) 45%, #3a4b36);
+  background: color-mix(in srgb, var(--ctc-gold) 12%, transparent);
+}
+
+.creditcoin-panel__tab-body {
+  min-height: 8rem;
+}
+
+.creditcoin-panel__section {
+  margin: 0.85rem 0 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid color-mix(in srgb, #3a4b36 80%, transparent);
+}
+
+.creditcoin-panel__section:first-of-type {
+  margin-top: 0.15rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+.creditcoin-panel__section--focus {
+  padding: 0.7rem 0.65rem 0.35rem;
+  margin-left: -0.35rem;
+  margin-right: -0.35rem;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, #7a8ab8 55%, transparent);
+  background: color-mix(in srgb, #4a5a88 16%, transparent);
+}
+
+.creditcoin-panel__section-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.creditcoin-panel__hint {
+  margin: 0 0 0.55rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.creditcoin-panel__wallet {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.65rem 0.7rem;
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--accent) 12%, #1b2419) 0%,
+      #1b2419 55%,
+      color-mix(in srgb, #1b2419 90%, black) 100%
+    );
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, #3a4b36);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(232, 240, 226, 0.06);
+}
+
+.creditcoin-panel__wallet-addr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+}
+
+.creditcoin-panel__wallet-link {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.78rem;
+  color: var(--ctc-gold);
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.creditcoin-panel__wallet-link:hover {
+  text-decoration: underline;
+  border-color: transparent;
+}
+
+.creditcoin-panel__balances {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.creditcoin-panel__chip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  padding: 0.4rem 0.5rem;
+  background: rgba(14, 20, 12, 0.45);
+  border: 1px solid #3a4b36;
+  border-radius: 8px;
+}
+
+.creditcoin-panel__chip-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.creditcoin-panel__chip-value {
+  font-size: 0.95rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.creditcoin-panel__chip--realm .creditcoin-panel__chip-value {
+  color: var(--ctc-gold);
+}
+
+.creditcoin-panel__chip--gas .creditcoin-panel__chip-value {
+  color: var(--text);
+}
+
+.creditcoin-panel__chip-note {
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--muted) 80%, transparent);
+}
+
+.creditcoin-panel__mm-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.creditcoin-panel__token-addr {
+  margin: 0;
+  font-size: 0.68rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.creditcoin-panel__swap-card {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+  padding: 0.55rem 0.6rem;
+  background: color-mix(in srgb, var(--accent) 10%, #1b2419);
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, #3a4b36);
+  border-radius: 8px;
+}
+
+.creditcoin-panel__swap-title {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ctc-gold);
+}
+
+.creditcoin-panel__swap-flow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.creditcoin-panel__swap-flow strong {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.creditcoin-panel__swap-arrow {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.creditcoin-panel__btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.creditcoin-panel__warn {
+  margin: 0;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  color: var(--danger);
+}
+
+.creditcoin-panel__warn button {
+  display: inline;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  font-size: inherit;
+}
+
+.creditcoin-panel__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+}
+
+.creditcoin-panel__row input,
+.creditcoin-panel__row select {
+  border: 1px solid #4a5d42;
+  background: #1b2419;
+  color: var(--text);
+  border-radius: 6px;
+  padding: 0.4rem 0.55rem;
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.creditcoin-panel__row input:focus,
+.creditcoin-panel__row select:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 65%, #4a5d42);
+}
+
+.creditcoin-panel__btn-primary {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 55%, #31402c) 0%,
+    color-mix(in srgb, var(--accent) 28%, #31402c) 100%
+  );
+  border-color: color-mix(in srgb, var(--accent) 55%, #4a5d42);
+  color: #1a2118;
+  font-weight: 650;
+}
+
+.creditcoin-panel__btn-primary:hover:not(:disabled) {
+  border-color: var(--accent);
+  filter: brightness(1.06);
+}
+
+.creditcoin-panel__btn-ghost {
+  padding: 0.28rem 0.55rem;
+  font-size: 0.75rem;
+  background: transparent;
+  border-color: #3a4b36;
+  color: var(--muted);
+}
+
+.creditcoin-panel__btn-ghost:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.creditcoin-panel__list {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.creditcoin-panel__item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.55rem;
+  background: #1b2419;
+  border: 1px solid #3a4b36;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.creditcoin-panel__item-meta {
+  margin-top: 0.15rem;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.creditcoin-panel__item button {
+  flex-shrink: 0;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.75rem;
+}
+
+.creditcoin-panel__empty {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.creditcoin-panel__bonus {
+  margin: 0.4rem 0 0;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ok) 35%, #3a4b36);
+  border-radius: 6px;
+}
+
+.creditcoin-panel__status {
+  display: inline-block;
+  margin-left: 0.25rem;
+  padding: 0.05rem 0.35rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid #3a4b36;
+  color: var(--muted);
+  background: rgba(14, 20, 12, 0.4);
+}
+
+.creditcoin-panel__status--minted,
+.creditcoin-panel__status--listed {
+  color: var(--ok);
+  border-color: color-mix(in srgb, var(--ok) 40%, #3a4b36);
+}
+
+.creditcoin-panel__status--pending,
+.creditcoin-panel__status--escrowed,
+.creditcoin-panel__status--notarized {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, #3a4b36);
+}
+
+.creditcoin-panel__status--failed,
+.creditcoin-panel__status--cancelled {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 40%, #3a4b36);
+}
+
+.creditcoin-panel__contracts {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.68rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.creditcoin-panel__link {
+  color: color-mix(in srgb, var(--muted) 70%, var(--ctc-gold));
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.creditcoin-panel__link:hover {
+  color: var(--ctc-gold);
+  text-decoration: underline;
+  border-color: transparent;
+}
+
+/* PL140.2 — quiet membership open accent when Guild opens while in a guild. */
+@keyframes guild-membership-open-accent-in {
+  0% {
+    border-color: color-mix(in srgb, #78a8c0 78%, #3a4b36);
+    box-shadow: 0 0 0 2px color-mix(in srgb, #78a8c0 38%, transparent);
+  }
+  100% {
+    border-color: #3a4b36;
+    box-shadow: none;
+  }
+}
+
+.guild-panel--member-open-accent {
+  animation: guild-membership-open-accent-in 0.45s ease-out;
+  border-color: color-mix(in srgb, #78a8c0 68%, #3a4b36);
+}
+
+.guild-panel--member-open-accent .guild-panel__header h3 {
+  color: #9cc4d8;
+}
+
+/* PL125.2 — brief mute-row visual confirm when enabling mute (settings only; SFX-free). */
+@keyframes settings-mute-enable-confirm-in {
+  0% {
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  100% {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+.settings-panel__mute-row {
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin-left: -6px;
+  margin-right: -6px;
+}
+
+.settings-panel__mute-row--confirm {
+  animation: settings-mute-enable-confirm-in 0.52s ease-out;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.settings-panel__mute-chip {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  opacity: 0.92;
+}
+
+/* PL130.1–PL130.2 — day-night / tips enable row confirm (same mute-family chrome). */
+.settings-panel__pref-row {
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin-left: -6px;
+  margin-right: -6px;
+}
+
+.settings-panel__pref-row--confirm {
+  animation: settings-mute-enable-confirm-in 0.52s ease-out;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.settings-panel__pref-chip {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  opacity: 0.92;
+}
+
+/* PL19.1–PL19.2 — brief economy panel open accent (same panel; no price/listing retune). */
+@keyframes economy-panel-open-accent-in {
+  0% {
+    border-color: color-mix(in srgb, var(--accent) 80%, #3a4b36);
+    box-shadow: 0 0 0 2px color-mix(in srgb, #e8c878 35%, transparent);
+  }
+  100% {
+    border-color: #3a4b36;
+    box-shadow: none;
+  }
+}
+
+.vendor-panel--open-accent,
+.market-panel--open-accent {
+  animation: economy-panel-open-accent-in 0.45s ease-out;
+  border-color: color-mix(in srgb, var(--accent) 70%, #3a4b36);
+}
+
+.vendor-panel--open-accent .vendor-panel__header h3,
+.market-panel--open-accent .market-panel__header h3 {
+  color: #e8d090;
+}
+
+/* PL24.1–PL24.3 — brief Build / Craft / Travel open accent (same panels; no economy invent). */
+@keyframes workspace-panel-open-accent-in {
+  0% {
+    border-color: color-mix(in srgb, var(--accent) 70%, #3a4b36);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 32%, transparent);
+  }
+  100% {
+    border-color: #3a4b36;
+    box-shadow: none;
+  }
+}
+
+.build-panel--open-accent,
+.craft-panel--open-accent,
+.decor-panel--open-accent {
+  animation: workspace-panel-open-accent-in 0.45s ease-out;
+  border-color: color-mix(in srgb, var(--accent) 60%, #3a4b36);
+}
+
+.build-panel--open-accent .build-panel__header h3,
+.craft-panel--open-accent .craft-panel__header h3,
+.decor-panel--open-accent .decor-panel__header h3 {
+  color: var(--accent);
+}
+
+/* PL144.2 — Travel open accent keyed to current-map chip (kinship with PL133.2 rows). */
+@keyframes travel-map-open-accent-in {
+  0% {
+    border-color: color-mix(
+      in srgb,
+      var(--travel-map-accent, var(--accent)) 78%,
+      #3a4b36
+    );
+    box-shadow: 0 0 0 2px
+      color-mix(in srgb, var(--travel-map-accent, var(--accent)) 38%, transparent);
+  }
+  100% {
+    border-color: #3a4b36;
+    box-shadow: none;
+  }
+}
+
+.travel-panel--map-open-accent {
+  animation: travel-map-open-accent-in 0.45s ease-out;
+  border-color: color-mix(
+    in srgb,
+    var(--travel-map-accent, var(--accent)) 68%,
+    #3a4b36
+  );
+}
+
+.travel-panel--map-open-accent .travel-panel__header h3 {
+  color: var(--travel-map-accent, var(--accent));
+}
+
+/* PL133.2 — quiet Travel destination rows tinted to TopBar map-chip accents. */
+.travel-panel__dest--map-tint {
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.travel-panel__dest--here {
+  font-weight: 700;
+}
+
+.travel-panel__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.travel-panel__grid button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: 4.4rem;
+  padding: 0.7rem 0.8rem;
+  text-align: left;
+  border-radius: 8px;
+}
+
+.travel-panel__glyph {
+  font-size: 1.05rem;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.travel-panel__word {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.travel-panel__here {
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+/* PL52.2 — brief Arena stub open accent (warm plaque family; optional path copy unchanged). */
+@keyframes arena-stub-panel-open-accent-in {
+  0% {
+    border-color: color-mix(in srgb, #e07060 80%, #3a4b36);
+    box-shadow:
+      inset 3px 0 0 #e07060,
+      0 0 0 2px color-mix(in srgb, #c03828 40%, transparent);
+  }
+  100% {
+    border-color: #e07060;
+    box-shadow: inset 3px 0 0 #e07060, 0 0 14px #c0382833;
+  }
+}
+
+.arena-stub-panel--open-accent {
+  animation: arena-stub-panel-open-accent-in 0.45s ease-out;
+}
+
+.arena-stub-panel--open-accent .arena-stub-panel__header h3 {
+  color: #f08878;
+  text-shadow: 0 0 10px #c0382866;
+}
+
+/* PL29.1–PL29.2 / PL34.1 / PL34.3 / PL38.1 / PL55.1 — brief Trade / Quest / Mail / Notice / Chat / Tutor open accent (social seafoam; distinct from economy gold). */
+@keyframes social-panel-open-accent-in {
+  0% {
+    border-color: color-mix(in srgb, #8ec4a8 75%, #3a4b36);
+    box-shadow: 0 0 0 2px color-mix(in srgb, #8ec4a8 32%, transparent);
+  }
+  100% {
+    border-color: #3a4b36;
+    box-shadow: none;
+  }
+}
+
+.trade-panel--open-accent,
+.quest-panel--open-accent,
+.mail-panel--open-accent,
+.notice-panel--open-accent,
+.chat-panel--open-accent,
+.tutorial-npc-panel--open-accent {
+  animation: social-panel-open-accent-in 0.45s ease-out;
+  border-color: color-mix(in srgb, #8ec4a8 65%, #3a4b36);
+}
+
+.trade-panel--open-accent .trade-panel__header h3,
+.quest-panel--open-accent .quest-panel__header h3,
+.mail-panel--open-accent .mail-panel__header h3,
+.notice-panel--open-accent .notice-panel__header h3,
+.chat-panel--open-accent .chat-panel__header h3,
+.tutorial-npc-panel--open-accent .tutorial-npc-panel__header h3 {
+  color: #a8d4bc;
+}
+
+.quest-panel--board {
+  position: absolute;
+  top: 88px;
+  right: 12px;
+  width: min(380px, calc(100% - 24px));
+  max-height: 74vh;
+  overflow: auto;
+  pointer-events: auto;
+  padding: 0.9rem 1rem 0.75rem;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, #4a3a24 28%, var(--panel)) 0%,
+      color-mix(in srgb, var(--panel) 90%, #161410) 100%
+    );
+  border-color: color-mix(in srgb, var(--accent) 38%, #4a5d42);
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.48),
+    inset 0 1px 0 rgba(232, 220, 180, 0.12);
+}
+
+.quest-panel--board.quest-panel--open-accent {
+  border-color: color-mix(in srgb, #8ec4a8 65%, #3a4b36);
+}
+
+.quest-panel--board .quest-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 0.65rem;
+}
+
+.quest-panel--board .quest-panel__header h3 {
+  margin: 0.05rem 0 0;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+}
+
+.quest-panel__header-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.quest-panel__kicker {
+  margin: 0;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.quest-panel__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.quest-panel__pips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.quest-panel__pip {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 35%, #1b2419);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.quest-panel__pip--done {
+  background: color-mix(in srgb, var(--ok) 70%, #1b2419);
+}
+
+.quest-panel__pip--current {
+  background: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.quest-panel__current {
+  position: relative;
+  padding: 0.85rem 0.95rem 0.8rem 1.05rem;
+  border-radius: 8px;
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, #e4d4b0 16%, var(--panel)) 0%,
+      color-mix(in srgb, var(--panel) 86%, #1b2419) 100%
+    );
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, #3a4b36);
+  box-shadow: inset 0 1px 0 rgba(232, 224, 196, 0.14);
+}
+
+.quest-panel__current::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent);
+}
+
+.quest-panel__current--locked {
+  opacity: 0.72;
+}
+
+.quest-panel__badge {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  color: var(--accent);
+}
+
+.quest-panel__badge--ready {
+  background: color-mix(in srgb, #e0d078 18%, transparent);
+  border-color: color-mix(in srgb, #e0d078 55%, transparent);
+  color: #e8d890;
+}
+
+.quest-panel__badge--claimed {
+  color: #b8e0a8;
+  border-color: color-mix(in srgb, var(--ok) 45%, transparent);
+}
+
+.quest-panel__badge--locked {
+  color: var(--muted);
+  border-color: #3a4b36;
+}
+
+.quest-panel__title {
+  margin: 0;
+  font-size: 1.02rem;
+  letter-spacing: 0.01em;
+}
+
+.quest-panel__blurb {
+  margin: 0.35rem 0 0.55rem;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--text) 88%, var(--muted));
+}
+
+.quest-panel__reward {
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+
+.quest-panel__turn-in {
+  margin: 0.55rem 0 0;
+  font-size: 0.8rem;
+  color: #e8d890;
+}
+
+.quest-panel__empty {
+  margin: 0 0 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  background: color-mix(in srgb, var(--panel) 70%, #1b2419);
+  border: 1px dashed color-mix(in srgb, var(--accent) 28%, #3a4b36);
+}
+
+.quest-panel__section {
+  margin: 0 0 0.4rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.quest-panel__done-list {
+  display: grid;
+  gap: 4px;
+  margin-top: 0.85rem;
+}
+
+.quest-panel__done {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.28rem 0.15rem;
+  opacity: 0.78;
+}
+
+.quest-panel__check {
+  flex: 0 0 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  background: color-mix(in srgb, var(--ok) 32%, #1b2419);
+  color: #c4e8b4;
+}
+
+.quest-panel__done-title {
+  flex: 1;
+  font-size: 0.82rem;
+}
+
+.quest-panel__done-status {
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.quest-panel__footnote {
+  margin: 0.85rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.tutorial-npc-dialogue {
+  position: absolute;
+  left: 50%;
+  right: auto;
+  top: auto;
+  bottom: 36px;
+  width: min(640px, calc(100% - 32px));
+  max-height: none;
+  overflow: visible;
+  transform: translateX(-50%);
+  padding: 0.75rem 1.1rem 0.7rem;
+  cursor: pointer;
+}
+
+.tutorial-npc-dialogue__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.35rem;
+}
+
+.tutorial-npc-dialogue__name {
+  margin: 0;
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.tutorial-npc-dialogue__line {
+  margin: 0 0 0.55rem;
+  min-height: 2.8rem;
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.tutorial-npc-dialogue__line--player {
+  color: #d8c078;
+  font-style: italic;
+}
+
+.tutorial-npc-dialogue__reply {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-top: 0.15rem;
+  background: color-mix(in srgb, var(--panel) 55%, #1b2419);
+}
+
+.tutorial-npc-dialogue__hint {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* PL128.1 — quiet ready-row tint when a quest is claimable (complements Claim cue). */
+.quest-panel__row--ready {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #e0d078 38%, transparent),
+    0 0 0 1px color-mix(in srgb, #e0d078 16%, transparent);
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, #e0d078 14%, var(--panel)) 0%,
+      color-mix(in srgb, var(--panel) 86%, #1b2419) 100%
+    );
+}
+
+/* PL128.2 — brief inventory slot flash when qty rises / new stack (bag inflow). */
+@keyframes inventory-pickup-slot-flash-in {
+  0% {
+    background: color-mix(in srgb, var(--accent) 34%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, #98c878 48%, transparent);
+  }
+  100% {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+.inventory-panel__slot--pickup-flash {
+  animation: inventory-pickup-slot-flash-in 0.5s ease-out;
+}
+
+/* Inventory icon grid + search/filter (bag chrome; capacity rules unchanged). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.inventory-panel {
+  position: absolute;
+  top: 100px;
+  left: 12px;
+  width: 400px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.inventory-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.inventory-panel__header h3 {
+  margin: 0;
+}
+
+.inventory-panel__search {
+  display: block;
+  flex-shrink: 0;
+}
+
+.inventory-panel__search input {
+  width: 100%;
+}
+
+.inventory-panel__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.inventory-panel__filter {
+  padding: 0.28rem 0.55rem;
+  font-size: 0.78rem;
+}
+
+.inventory-panel__filter--active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, #31402c);
+}
+
+.inventory-panel__panes {
+  display: flex;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.inventory-panel__pane {
+  flex: 1;
+  padding: 0.32rem 0.5rem;
+  font-size: 0.82rem;
+}
+
+.inventory-panel__pane--active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, #31402c);
+}
+
+.inventory-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.15rem 0.1rem 0.35rem;
+  list-style: none;
+  overflow: auto;
+  min-height: 0;
+}
+
+.inventory-panel__grid > li {
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.inventory-panel__slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.22rem;
+  width: 100%;
+  min-height: 4.7rem;
+  padding: 0.35rem 0.2rem 0.4rem;
+  border-radius: 8px;
+  border: 1px solid #4a5d42;
+  background: #1b2419;
+}
+
+.inventory-panel__icon-wrap {
+  position: relative;
+  width: 2.2rem;
+  height: 2.2rem;
+  flex-shrink: 0;
+}
+
+.inventory-panel__slot-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  width: 100%;
+  font-size: 0.62rem;
+  line-height: 1.15;
+  text-align: center;
+  word-break: break-word;
+}
+
+.inventory-panel__slot:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, #4a5d42);
+}
+
+.inventory-panel__slot--selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.inventory-panel__slot--low {
+  border-color: color-mix(in srgb, var(--danger) 55%, #4a5d42);
+}
+
+.inventory-panel__slot--equipped {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.item-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.inventory-panel__qty {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  min-width: 1.15rem;
+  padding: 0 0.2rem;
+  border-radius: 4px;
+  background: rgba(12, 18, 10, 0.78);
+  color: var(--text);
+  font-size: 0.62rem;
+  line-height: 1.25;
+  text-align: right;
+}
+
+.inventory-panel__equipped-pip {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: auto;
+  min-width: 0.95rem;
+  height: 0.95rem;
+  padding: 0 0.22rem;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 85%, #31402c);
+  color: #1a2118;
+  font-size: 0.52rem;
+  font-weight: 700;
+  line-height: 0.95rem;
+  text-align: center;
+}
+
+.inventory-panel__dur-bar {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(20, 28, 18, 0.7);
+  overflow: hidden;
+}
+
+.inventory-panel__dur-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--ok);
+}
+
+.inventory-panel__slot--low .inventory-panel__dur-bar > span {
+  background: var(--danger);
+}
+
+.inventory-panel__empty,
+.inventory-panel__hint {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+}
+
+.inventory-panel__detail {
+  flex-shrink: 0;
+  padding-top: 0.45rem;
+  border-top: 1px solid #3a4b36;
+}
+
+.inventory-panel__detail-name {
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.inventory-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+
+.inventory-panel__actions button {
+  padding: 0.32rem 0.65rem;
+  font-size: 0.82rem;
+}
+
+.inventory-panel__loadout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  overflow: auto;
+  min-height: 0;
+  padding: 0.1rem 0 0.2rem;
+}
+
+.inventory-panel__loadout-group h4 {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent) 70%, var(--muted));
+}
+
+.inventory-panel__loadout-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.inventory-panel__loadout-slot {
+  display: grid;
+  grid-template-columns: 5.2rem 2.2rem 1fr;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  border-radius: 8px;
+  border: 1px solid #4a5d42;
+  background: #1b2419;
+}
+
+.inventory-panel__loadout-slot:disabled {
+  opacity: 0.78;
+  cursor: default;
+}
+
+.inventory-panel__loadout-slot--selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.inventory-panel__loadout-kind {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.inventory-panel__loadout-icon {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.inventory-panel__loadout-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  background: #24301f;
+  color: #6a7860;
+}
+
+.inventory-panel__loadout-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* PL123.2 — soft preferred-partner Host · chip when trading while visiting. */
+.trade-panel__preferred-partner {
+  transition: border-color 0.35s ease-out, box-shadow 0.35s ease-out;
+}
+
+.trade-panel__preferred-partner--reinforce {
+  animation: trade-preferred-partner-reinforce-in 0.55s ease-out;
+}
+
+@keyframes trade-preferred-partner-reinforce-in {
+  0% {
+    border-color: #8ec4d0;
+    box-shadow: 0 0 12px color-mix(in srgb, #8ec4d0 42%, transparent);
+  }
+  100% {
+    border-color: #5a8a9a;
+    box-shadow: none;
+  }
+}
+
+/* PL17.1 — soft unread accent on Mail panel (pending inbox; same panel, no HUD column). */
+.mail-panel--unread {
+  border-color: color-mix(in srgb, #c4a868 70%, #3a4b36);
+  box-shadow: 0 0 0 1px color-mix(in srgb, #e8c878 35%, transparent);
+}
+
+.mail-panel--unread .mail-panel__header h3 {
+  color: #e8d090;
+}
+
+.mail-panel__unread-tag {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #e8c878;
+}
+
+/* PL32.1 — quiet vendor buy-row afford tint (panel open; prices unchanged). */
+.vendor-panel {
+  position: absolute;
+  top: 100px;
+  right: 12px;
+  width: 320px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  overflow: auto;
+  pointer-events: auto;
+}
+
+.vendor-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vendor-panel__header h3 {
+  margin: 0;
+}
+
+.vendor-panel__lede {
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.vendor-panel__section {
+  margin: 0.35rem 0 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.vendor-panel__list {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.vendor-panel__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.4rem 0.55rem;
+}
+
+.vendor-panel__row .item-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.vendor-panel__row-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.vendor-panel__row-name {
+  display: block;
+  font-weight: 600;
+}
+
+.vendor-panel__row-price {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.vendor-panel__buy--affordable {
+  border-color: color-mix(in srgb, var(--ok) 50%, #4a5d42);
+  background: color-mix(in srgb, var(--ok) 14%, #31402c);
+}
+
+.vendor-panel__buy--short {
+  border-color: #3a4038;
+  background: #2a3228;
+  color: var(--muted);
+  opacity: 0.88;
+}
+
+/* Craft recipe book — icon tiles + selected workbench (recipes/costs unchanged). */
+.craft-panel {
+  position: absolute;
+  top: 100px;
+  right: 12px;
+  width: 368px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.craft-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-shrink: 0;
+  gap: 0.6rem;
+}
+
+.craft-panel__header h3 {
+  margin: 0;
+  text-transform: none;
+}
+
+.craft-panel__eyebrow {
+  margin: 0 0 0.12rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.craft-panel__lede,
+.craft-panel__tip {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  flex-shrink: 0;
+}
+
+.craft-panel__tip {
+  font-size: 0.72rem;
+  max-height: 3.6rem;
+  overflow: auto;
+}
+
+.craft-panel__banner {
+  margin: 0;
+  flex-shrink: 0;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  background: color-mix(in srgb, var(--accent) 14%, #243022);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, #3a4b36);
+}
+
+.craft-panel__banner--busy {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 14%, #243022);
+  border-color: color-mix(in srgb, var(--danger) 45%, #3a4b36);
+}
+
+.craft-panel__collect {
+  width: 100%;
+  flex-shrink: 0;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #1a2118;
+  background: color-mix(in srgb, var(--accent) 82%, #31402c);
+  border-color: var(--accent);
+}
+
+.craft-panel__collect:hover {
+  filter: brightness(1.08);
+}
+
+.craft-panel__upgrade {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  flex-shrink: 0;
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+}
+
+.craft-panel__upgrade-title {
+  font-weight: 600;
+}
+
+.craft-panel__upgrade-mats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+}
+
+.craft-panel__book {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.15rem 0.05rem 0.2rem;
+  overflow: auto;
+  min-height: 4.6rem;
+}
+
+.craft-panel__tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.craft-panel__tile:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, #4a5d42);
+}
+
+.craft-panel__tile--selected {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.craft-panel__tile-qty {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  min-width: 1.15rem;
+  padding: 0 0.2rem;
+  border-radius: 4px;
+  background: rgba(12, 18, 10, 0.78);
+  font-size: 0.62rem;
+  line-height: 1.25;
+  text-align: right;
+}
+
+.craft-panel__workbench {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #3a4b36;
+}
+
+.craft-panel__workbench-name {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.craft-panel__io {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.craft-panel__inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.craft-panel__arrow {
+  color: var(--accent);
+  font-size: 1.05rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.craft-panel__chip {
+  position: relative;
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid #4a5d42;
+  background: #1b2419;
+}
+
+.craft-panel__chip--output {
+  border-color: color-mix(in srgb, var(--accent) 55%, #4a5d42);
+  background: color-mix(in srgb, var(--accent) 12%, #1b2419);
+}
+
+.craft-panel__chip-qty {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  padding: 0 0.18rem;
+  border-radius: 3px;
+  background: rgba(12, 18, 10, 0.82);
+  font-size: 0.6rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.craft-panel__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.craft-panel__meta > span {
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--panel) 70%, black);
+  border: 1px solid #3a4b36;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.craft-panel__gate {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.craft-panel__start {
+  width: 100%;
+  font-weight: 600;
+}
+
+.craft-panel__start--ready {
+  background: color-mix(in srgb, var(--ok) 28%, #31402c);
+  border-color: color-mix(in srgb, var(--ok) 55%, #4a5d42);
+}
+
+/* PL35.1 — quiet craft recipe afford tint (recipes/costs unchanged). */
+.craft-panel__recipe--affordable {
+  border: 1px solid color-mix(in srgb, var(--ok) 45%, #4a5d42);
+  background: color-mix(in srgb, var(--ok) 12%, #31402c);
+}
+
+.craft-panel__recipe--short {
+  border: 1px solid #3a4038;
+  background: #2a3228;
+  opacity: 0.9;
+}
+
+.craft-panel__recipe--xp_locked {
+  border: 1px solid #3a4038;
+  background: #2c342a;
+  opacity: 0.82;
+}
+
+.craft-panel__input--short {
+  font-weight: 600;
+  border-color: color-mix(in srgb, var(--danger) 55%, #4a5d42);
+}
+
+/* PL39.1 — Craft upgrade afford clarity (T2 costs / recipes unchanged). */
+.craft-panel__upgrade--affordable {
+  border: 1px solid color-mix(in srgb, var(--ok) 50%, #4a5d42);
+  background: color-mix(in srgb, var(--ok) 14%, #31402c);
+}
+
+.craft-panel__upgrade--short {
+  border: 1px solid #3a4038;
+  background: #2a3228;
+  color: var(--muted);
+  opacity: 0.88;
+}
+
+.craft-panel__short-hint {
+  font-weight: 600;
+  color: color-mix(in srgb, var(--danger) 75%, var(--muted));
+}
+
+/* PL39.2 — Housing decor place afford clarity (coin costs unchanged). */
+.decor-panel__place--affordable {
+  border-color: color-mix(in srgb, var(--ok) 50%, #4a5d42);
+  background: color-mix(in srgb, var(--ok) 14%, #31402c);
+}
+
+.decor-panel__place--short {
+  border-color: #3a4038;
+  background: #2a3228;
+  color: var(--muted);
+  opacity: 0.88;
+}
+
+.decor-panel__short-hint {
+  font-weight: 600;
+  color: color-mix(in srgb, var(--danger) 75%, var(--muted));
+}
+
+/* PL35.2 — Build place afford clarity (place costs / unlimited unchanged). */
+.build-panel__place--affordable {
+  border-color: color-mix(in srgb, var(--ok) 50%, #4a5d42);
+  background: color-mix(in srgb, var(--ok) 14%, #31402c);
+}
+
+.build-panel__place--short {
+  border-color: #3a4038;
+  background: #2a3228;
+  color: var(--muted);
+  opacity: 0.88;
+}
+
+.build-panel__short-hint {
+  font-weight: 600;
+  color: color-mix(in srgb, var(--danger) 75%, var(--muted));
+}
+
+.build-panel__section {
+  margin-top: 0.75rem;
+}
+
+.build-panel__section-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.build-panel__placed {
+  display: grid;
+  gap: 0.45rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.build-panel__card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #3a4b36;
+  border-radius: 8px;
+  background: #1b2419;
+}
+
+.build-panel__card--selected {
+  border-color: color-mix(in srgb, var(--ok) 55%, #4a5d42);
+  background: color-mix(in srgb, var(--ok) 12%, #1b2419);
+}
+
+.build-panel__card-name,
+.build-panel__card-select {
+  font-weight: 600;
+}
+
+.build-panel__card-select {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+
+.build-panel__card-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.3rem;
+}
+
+.build-panel__card button {
+  flex-shrink: 0;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.78rem;
+}
+
+.land-editor-world-actions {
+  display: flex;
+  gap: 0.35rem;
+  background: rgba(18, 22, 16, 0.88);
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #7a9a58;
+}
+
+.land-editor-world-actions button {
+  padding: 0.22rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.market-panel__search {
+  display: block;
+  margin-bottom: 0.55rem;
+}
+
+.market-panel__search input {
+  width: 100%;
+}
+
+.market-panel__header-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.market-analytics {
+  margin-top: 8px;
+}
+
+.market-analytics__items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+  max-height: 12rem;
+  overflow: auto;
+}
+
+.market-analytics__item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-align: left;
+  padding: 0.28rem 0.5rem;
+  background: #1b2419;
+  border: 1px solid #3a4b36;
+}
+
+.market-analytics__item .item-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.market-analytics__item--active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, #1b2419);
+}
+
+.market-analytics__card {
+  border: 1px solid #3a4b36;
+  border-radius: 8px;
+  padding: 8px;
+  background: #1b2419;
+}
+
+.market-analytics__card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 8px;
+}
+
+.market-analytics__card-head .item-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.market-analytics__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin: 0 0 10px;
+}
+
+.market-analytics__stats div {
+  min-width: 0;
+}
+
+.market-analytics__stats dt {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.market-analytics__stats dd {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.market-analytics__suggest {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid #3a4b36;
+  padding-top: 8px;
+}
+
+.market-analytics__suggest button {
+  flex-shrink: 0;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.78rem;
+}
+
+.market-analytics__error {
+  color: color-mix(in srgb, var(--danger) 80%, var(--text));
+  font-size: 0.8rem;
+  margin: 0 0 8px;
+}
+
+/* PL32.2 — market buy short-funds clarity (listings/TTL unchanged). */
+.market-panel__list-form {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.market-list-inv {
+  display: grid;
+  gap: 4px;
+  max-height: 11rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.market-list-inv__empty {
+  margin: 0;
+  padding: 0.45rem 0.2rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.market-list-inv__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.35rem 0.5rem;
+  background: #1b2419;
+  border: 1px solid #3a4b36;
+  border-radius: 8px;
+  color: inherit;
+}
+
+.market-list-inv__row:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--ok) 35%, #3a4b36);
+}
+
+.market-list-inv__row--selected {
+  border-color: color-mix(in srgb, var(--ok) 55%, #3a4b36);
+  background: rgba(48, 72, 40, 0.55);
+}
+
+.market-list-inv__row .item-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.market-list-inv__name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.market-list-inv__qty {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--accent);
+}
+
+.market-panel__listing {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  border: 1px solid #3a4b36;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 6px;
+  background: #1b2419;
+}
+
+.market-panel__listing .item-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.market-panel__listing-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.market-panel__listing--short {
+  border-color: #3a4038 !important;
+  opacity: 0.9;
+}
+
+.market-panel__short-hint {
+  font-weight: 600;
+  color: color-mix(in srgb, var(--danger) 75%, var(--muted));
+}
+
+.market-panel__buy--short {
+  border-color: #3a4038;
+  background: #2a3228;
+  color: var(--muted);
+  opacity: 0.88;
+}
+
+/* PL124.1 — soft edge vignette while energy is in the low band (not a HUD column). */
+.hud-energy-low-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.35s ease-out;
+}
+
+/* PL126.1 — soft cool/danger edge vignette while health is in the low band (not a HUD column). */
+.hud-health-low-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.35s ease-out;
+}
+
+/* PL132.2 — soft cool steel edge vignette while equipped tool is low (not a HUD column). */
+.hud-tool-low-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.35s ease-out;
+}
+
+/* PL124.2 — brief soft recovery rim after successful eat (complements Ate + SFX). */
+@keyframes eat-success-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--eat-reinforce-opacity, 0.95);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-eat-success-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: eat-success-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL126.2 — brief soft gold rim when soft currency rises (complements Sold/Bought). */
+@keyframes coins-gain-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--coins-reinforce-opacity, 0.92);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-coins-gain-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: coins-gain-world-reinforce-in 0.48s ease-out forwards;
+}
+
+/* PL127.2 — brief soft sprout rim after successful crop plant (complements Planted + SFX). */
+@keyframes crop-plant-success-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--crop-plant-reinforce-opacity, 0.94);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-crop-plant-success-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: crop-plant-success-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL142.2 — brief soft harvest rim when a crop plot flips to ready (complements Ready). */
+@keyframes crop-ready-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--crop-ready-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-crop-ready-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: crop-ready-world-reinforce-in 0.48s ease-out forwards;
+}
+
+/* PL151.2 — brief soft wheat-gold rim after crop harvest ok (complements Harvested). */
+@keyframes crop-harvest-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--crop-harvest-reinforce-opacity, 0.88);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-crop-harvest-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: crop-harvest-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL135.2 — brief soft progress rim when character level rises (complements Level N). */
+@keyframes level-up-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--level-up-reinforce-opacity, 0.9);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-level-up-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: level-up-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL136.1 — brief soft unlock rim when an achievement unlocks (complements Unlocked ·). */
+@keyframes achievement-unlock-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--achievement-unlock-reinforce-opacity, 0.88);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-achievement-unlock-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: achievement-unlock-world-reinforce-in 0.54s ease-out forwards;
+}
+
+/* PL136.2 — brief soft title rim when cosmetic title changes (complements Title ·). */
+@keyframes title-change-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--title-change-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-title-change-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: title-change-world-reinforce-in 0.53s ease-out forwards;
+}
+
+/* PL138.1 — brief soft market rim when a listing posts (complements Listed). */
+@keyframes market-list-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--market-list-reinforce-opacity, 0.88);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-market-list-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: market-list-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL138.2 — brief soft quest rim on claim ok (complements Quest claimed). */
+@keyframes quest-claim-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--quest-claim-reinforce-opacity, 0.9);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-quest-claim-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: quest-claim-world-reinforce-in 0.51s ease-out forwards;
+}
+
+/* PL139.1 — brief soft meadow rim when returning home from a visit. */
+@keyframes visit-home-return-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--visit-home-return-reinforce-opacity, 0.88);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-visit-home-return-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: visit-home-return-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL184.1 — brief soft guest-teal rim after visit arrive ok (complements Visiting ·). */
+@keyframes visit-arrive-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--visit-arrive-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-visit-arrive-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: visit-arrive-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL184.2 — brief soft sage rim when a peer first enters interact range. */
+@keyframes nearby-peer-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--nearby-peer-reinforce-opacity, 0.82);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-nearby-peer-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: nearby-peer-world-reinforce-in 0.48s ease-out forwards;
+}
+
+/* PL139.2 — brief quiet social rim after chat send ok (complements Sent). */
+@keyframes chat-send-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--chat-send-reinforce-opacity, 0.78);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-chat-send-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: chat-send-world-reinforce-in 0.42s ease-out forwards;
+}
+
+/* PL143.1 — brief soft handshake rim on trade accept ok (complements Trade accepted). */
+@keyframes trade-accept-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--trade-accept-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-trade-accept-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: trade-accept-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL143.2 — brief quiet membership rim after guild bank deposit ok. */
+@keyframes guild-bank-deposit-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--guild-bank-deposit-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-guild-bank-deposit-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: guild-bank-deposit-world-reinforce-in 0.48s ease-out forwards;
+}
+
+/* PL148.1 — brief quiet steel-slate rim after guild bank withdraw ok. */
+@keyframes guild-bank-withdraw-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--guild-bank-withdraw-reinforce-opacity, 0.82);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-guild-bank-withdraw-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: guild-bank-withdraw-world-reinforce-in 0.48s ease-out forwards;
+}
+
+/* PL148.2 — brief soft welcome rim after guild invite accept ok. */
+@keyframes invite-accept-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--invite-accept-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-invite-accept-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: invite-accept-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL149.1 — brief soft parchment rim after mail send ok. */
+@keyframes mail-send-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--mail-send-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-mail-send-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: mail-send-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL149.2 — brief soft rosewood rim after decor place ok. */
+@keyframes decor-place-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--decor-place-reinforce-opacity, 0.82);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-decor-place-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: decor-place-world-reinforce-in 0.48s ease-out forwards;
+}
+
+/* PL150.1 — brief soft forge-pewter rim after tool repair ok. */
+@keyframes tool-repair-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--tool-repair-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-tool-repair-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: tool-repair-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL152.1 — brief soft ready-grip steel rim after tool equip ok. */
+@keyframes tool-equip-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--tool-equip-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-tool-equip-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: tool-equip-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL154.2 — brief soft release-grip mist rim after tool unequip ok. */
+@keyframes tool-unequip-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--tool-unequip-reinforce-opacity, 0.8);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-tool-unequip-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: tool-unequip-world-reinforce-in 0.48s ease-out forwards;
+}
+
+/* PL152.2 — brief soft sage-parchment rim after mail claim ok. */
+@keyframes mail-claim-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--mail-claim-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-mail-claim-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: mail-claim-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL153.1 — brief soft stall honey-copper rim after vendor buy ok. */
+@keyframes vendor-buy-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--vendor-buy-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-vendor-buy-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: vendor-buy-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL155.2 — brief soft parchment-gold rim after market buy ok. */
+@keyframes market-buy-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--market-buy-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-market-buy-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: market-buy-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL156.1 — brief soft stall amber-copper rim after vendor sell ok. */
+@keyframes vendor-sell-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--vendor-sell-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-vendor-sell-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: vendor-sell-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL156.2 — brief soft dusty board-ash rim after market cancel ok. */
+@keyframes market-cancel-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--market-cancel-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-market-cancel-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: market-cancel-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL157.1 — brief soft release mist rim after outgoing trade cancel ok. */
+@keyframes trade-cancel-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--trade-cancel-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-trade-cancel-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: trade-cancel-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL157.2 — brief soft dusty parchment-ash rim after mail cancel ok. */
+@keyframes mail-cancel-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--mail-cancel-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-mail-cancel-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: mail-cancel-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL158.1 — brief soft warm founding crest rim after guild create ok. */
+@keyframes guild-create-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--guild-create-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-guild-create-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: guild-create-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL158.2 — brief soft cool membership-release rim after guild leave ok. */
+@keyframes guild-leave-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--guild-leave-reinforce-opacity, 0.82);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-guild-leave-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: guild-leave-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL159.1 — brief soft warm trail-gold rim after hunt win ok. */
+@keyframes hunt-win-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--hunt-win-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-hunt-win-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: hunt-win-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL179.1 — brief soft cool trail-ash rim after hunt lose ok. */
+@keyframes hunt-lose-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--hunt-lose-reinforce-opacity, 0.8);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-hunt-lose-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: hunt-lose-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL159.2 — brief soft sprout-olive rim after craft ok. */
+@keyframes craft-complete-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--craft-complete-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-craft-complete-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: craft-complete-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL161.1 — brief soft mint-lime rim after gather ok (stump/ore/pen). */
+@keyframes gather-success-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--gather-success-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-gather-success-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: gather-success-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL161.2 — brief soft cool water rim after fish catch ok. */
+@keyframes fish-catch-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--fish-catch-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-fish-catch-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: fish-catch-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL162.1 — brief soft warm copper rim after station upgrade ok. */
+@keyframes station-upgrade-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--station-upgrade-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-station-upgrade-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: station-upgrade-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL162.2 — brief soft field-gold rim after land expand ok. */
+@keyframes expand-field-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--expand-field-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-expand-field-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: expand-field-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL160.2 — brief soft twilight-sky rim when cosmetic day phase flips. */
+@keyframes day-phase-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--day-phase-reinforce-opacity, 0.82);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-day-phase-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: day-phase-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL164.1 — brief soft Free cyan rim after map travel Arrived. */
+@keyframes travel-arrive-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--travel-arrive-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-travel-arrive-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: travel-arrive-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL164.2 — brief soft dawn-slate rim when day/night cycle is enabled. */
+@keyframes day-night-enable-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--day-night-enable-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-day-night-enable-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: day-night-enable-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL165.2 — brief soft Free cyan rim when scarce station settles busy→Free. */
+@keyframes scarce-free-settle-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--scarce-free-settle-reinforce-opacity, 0.82);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-scarce-free-settle-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: scarce-free-settle-world-reinforce-in 0.48s ease-out forwards;
+}
+
+/* PL166.1 — brief soft Busy coral rim when scarce station edges free→busy. */
+@keyframes scarce-busy-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--scarce-busy-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-scarce-busy-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: scarce-busy-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL179.2 — brief soft dusty rose rim when scarce busy interact soft-refuses. */
+@keyframes soft-refuse-busy-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--soft-refuse-busy-reinforce-opacity, 0.82);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-soft-refuse-busy-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: soft-refuse-busy-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL180.1 — brief soft hush graphite rim when mute toggles on/off. */
+@keyframes mute-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--mute-reinforce-opacity, 0.8);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-mute-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: mute-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL166.2 — brief soft system-slate rim after cosmetic deed claim ok. */
+@keyframes deed-claim-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--deed-claim-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-deed-claim-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: deed-claim-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL167.1 — brief soft mint-slate rim after mock deed mint ok. */
+@keyframes deed-mint-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--deed-mint-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-deed-mint-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: deed-mint-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL167.2 — brief soft link-slate rim after wallet link ok. */
+@keyframes wallet-link-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--wallet-link-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-wallet-link-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: wallet-link-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL168.1 — brief soft disconnect ash-slate rim after wallet disconnect ok. */
+@keyframes wallet-disconnect-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--wallet-disconnect-reinforce-opacity, 0.82);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-wallet-disconnect-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: wallet-disconnect-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL145.2 — brief soft warm rim when arriving on Arena map. */
+@keyframes arena-enter-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--arena-enter-reinforce-opacity, 0.86);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-arena-enter-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: arena-enter-world-reinforce-in 0.52s ease-out forwards;
+}
+
+/* PL147.1 — brief soft dusty rim when leaving the Arena map. */
+@keyframes arena-leave-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--arena-leave-reinforce-opacity, 0.8);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-arena-leave-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: arena-leave-world-reinforce-in 0.5s ease-out forwards;
+}
+
+/* PL146.2 — brief soft ember rim when soft-war wood deliver scores. */
+@keyframes soft-war-deliver-world-reinforce-in {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: var(--soft-war-deliver-reinforce-opacity, 0.84);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hud-soft-war-deliver-reinforce {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: soft-war-deliver-world-reinforce-in 0.48s ease-out forwards;
+}
+
+/* PL2.3 — soft world dim while one contextual panel is the job. */
+/* Trap Drei world Html (Vendor / Tutor tags) under HUD menus. */
+.land-scene {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+}
+
+.hud-panel-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 12, 8, 0.4);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.hud-panel-slot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.hud-panel-slot > * {
+  pointer-events: auto;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.combat-hud {
+  position: absolute;
+  left: 50%;
+  top: 72px;
+  transform: translateX(-50%);
+  min-width: 300px;
+  padding: 10px 16px 12px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--panel) 88%, #3a4b36) 0,
+    color-mix(in srgb, var(--panel) 94%, black) 100%
+  );
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(232, 240, 226, 0.08);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.combat-hud[data-incoming="1"] {
+  border-color: #d9776f;
+  box-shadow: 0 0 18px rgba(217, 119, 111, 0.35);
+}
+
+.combat-hud__kicker {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.combat-hud__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.combat-hud__foe,
+.combat-hud__you {
+  font-size: 0.82rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+.combat-hud__hp {
+  font-size: 0.72rem;
+  color: #e0a8a2;
+  font-variant-numeric: tabular-nums;
+}
+
+.combat-hud__hp--you {
+  color: #9dcea0;
+}
+
+.combat-hud__bar {
+  height: 9px;
+  margin: 4px 0 10px;
+  background: #2a1c1a;
+  border-radius: 99px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.combat-hud__bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #b85a52, #d9776f);
+}
+
+.combat-hud__bar--you span {
+  background: linear-gradient(90deg, #4e9a55, #6fbf73);
+}
+
+.combat-hud__keys {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  margin-bottom: 4px;
+}
+
+.combat-hud__keys kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid #4a5d42;
+  background: #1b2419;
+  font-size: 0.68rem;
+}
+
+.combat-hud__hint {
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.combat-world-plate {
+  min-width: 92px;
+  padding: 3px 7px 5px;
+  background: rgba(16, 22, 16, 0.78);
+  border: 1px solid rgba(196, 163, 90, 0.65);
+  border-radius: 6px;
+  text-align: center;
+  color: #e8f0e2;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.combat-world-plate[data-chasing="1"] {
+  border-color: #d9776f;
+  box-shadow: 0 0 10px rgba(217, 119, 111, 0.45);
+}
+
+.combat-world-plate__aggro {
+  color: #f0c078;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.combat-world-plate__hint {
+  margin-top: 2px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c4a070;
+}
+
+.combat-world-plate[data-fighting="1"] .combat-world-plate__hint {
+  color: #d9776f;
+}
+
+.combat-world-plate__name {
+  letter-spacing: 0.02em;
+}
+
+.combat-world-plate__bar {
+  height: 5px;
+  margin-top: 3px;
+  background: #2a1c1a;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.combat-world-plate__bar span {
+  display: block;
+  height: 100%;
+  background: #d9776f;
+}

@@ -1,0 +1,38 @@
+{
+  "name": "game",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "predev": "node scripts/free-ports.mjs && npm run build -w @game/shared",
+    "dev": "concurrently -k -n shared,server,web -c magenta,blue,green \"npm run dev -w @game/shared\" \"npm run dev:server\" \"npm run dev:web\"",
+    "dev:server": "npm run dev -w @game/server",
+    "dev:web": "npm run dev -w @game/web",
+    "build": "npm run build -w @game/shared && npm run build -w @game/server && npm run build -w @game/web",
+    "prestart": "node scripts/free-ports.mjs && npm run build",
+    "start": "concurrently -k -n server,web -c blue,green \"npm run start -w @game/server\" \"npm run start -w @game/web\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:contracts": "forge test",
+    "db:push": "npm run db:push -w @game/server",
+    "chain:deploy": "npm run chain:deploy -w @game/server",
+    "chain:deploy:sepolia": "npm run chain:deploy:sepolia -w @game/server",
+    "chain:deploy:asc": "npm run chain:deploy:asc -w @game/server",
+    "ports:free": "node scripts/free-ports.mjs",
+    "setup:kaykit": "node scripts/setup-kaykit-avatars.mjs",
+    "setup:japan-village": "node scripts/setup-japan-village.mjs",
+    "setup:niko-village": "node scripts/setup-niko-village.mjs",
+    "setup:farm-pack": "node scripts/setup-farm-pack.mjs",
+    "setup:wild-animals": "node scripts/setup-wild-animals.mjs",
+    "import:villager": "node scripts/import-villager-npc.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "kill-port": "^2.0.1",
+    "pngjs": "^7.0.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

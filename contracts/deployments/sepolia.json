@@ -1,0 +1,10 @@
+{
+  "chainId": 11155111,
+  "rpcUrl": "https://ethereum-sepolia-rpc.publicnode.com",
+  "explorer": "https://sepolia.etherscan.io",
+  "deployer": "0xb336B641CEb060bA403f9eb7bA5A00e1d3F35fe7",
+  "contracts": {
+    "CoinBurnNotary": "0x8ebd21b2934dBF67F7a09A6feB61bB05a31Ed36A"
+  },
+  "deployedAt": "2026-09-11T16:28:57.633Z"
+}
