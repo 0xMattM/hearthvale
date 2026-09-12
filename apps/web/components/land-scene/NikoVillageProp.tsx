@@ -123,14 +123,15 @@ function NikoVillageScene({
   const { width, depth, height } = fit;
   const house = useMemo(() => {
     prepareNikoVillageCache(scene);
-    let found: Mesh | null = null;
+    const hits: Mesh[] = [];
     scene.traverse((obj) => {
       const mesh = obj as Mesh;
       if (!mesh.isMesh) return;
       const n = mesh.name.replace(/\./g, "");
-      if (n === spec.mesh.replace(/\./g, "")) found = mesh;
+      if (n === spec.mesh.replace(/\./g, "")) hits.push(mesh);
     });
     const wrap = new Group();
+    const found = hits[0];
     if (!found) {
       throw new Error(`niko village mesh ${spec.mesh} missing`);
     }

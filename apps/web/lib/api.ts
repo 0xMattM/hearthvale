@@ -98,7 +98,7 @@ async function authJson<TExtra extends object = object>(
     if (parsed.unauthorized) notifyAuthExpired();
     return parsed;
   } catch {
-    return { ok: false, error: NETWORK_ERROR };
+    return { ok: false, error: NETWORK_ERROR } as AuthActionResult<TExtra>;
   }
 }
 
