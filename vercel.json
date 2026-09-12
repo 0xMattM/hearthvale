@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rootDirectory": "apps/web",
   "framework": "nextjs",
   "installCommand": "npm ci",
-  "buildCommand": "npm run build -w @game/shared && npm run build -w @game/web"
+  "buildCommand": "npm run build -w @game/shared && npm run build -w @game/web",
+  "outputDirectory": "apps/web/.next"
 }
