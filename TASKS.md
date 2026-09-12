@@ -1,6 +1,6 @@
 ﻿# Tasks
 
-**Last Updated:** September 11, 2026 (NFT land stock not pickupable)
+**Last Updated:** September 11, 2026 (code cleanup + NFT land stock not pickupable)
 
 - Sprint / MVP history: below (P0–P7 done).  
 - **Live queue (loop reads this):** **Hardening (RF\*)** — [FullGameBuildPlan_CityLands_Hardening.md](docs/19_development_plan/FullGameBuildPlan_CityLands_Hardening.md) (Gate 0–RF7.4 + RF9.1 done — **RF7.5** line-count in progress).  
@@ -30,6 +30,7 @@
 | SEC-7 | authJson 401 logout, GltfOrKit memo clone, applyState tokenRef | done |
 | SEC-8 | Auth failure tests (wrong password, taken username) | done |
 | CODE-REVIEW-1 | Full code review (server, client, chain, tests) | done |
+| CODE-CLEAN-1 | Review + dead-path cleanup (client wrappers, unmounted components) | done |
 | FOLIAGE-GHOST-1 | Trees behind the camera ghost (transparency), they do not vanish | done |
 | EXPLORE-VENDOR-1 | Remove vendor stall from Explore map (sell at City / homestead) | done |
 | CTC-ATTEST-WAIT-1 | Unstick notarized swaps: worker mutex, poll attestation, HUD copy | done |
@@ -51,6 +52,13 @@
 | CITY-NPC-LOOK-2 | Players share Hunter; tutors are Blacksmith with unique tunic/sash/cloak | superseded |
 | CITY-NPC-LOOK-3 | Distinguish tutors by Blacksmith color wash + nameplate rim (no extra clothes meshes) | superseded |
 | CITY-NPC-LOOK-4 | Recolor Blacksmith clothing atlas per profession (skin stays; no extra meshes) | done |
+
+### Discovered During Work (2026-09-11 cleanup)
+
+- GameApp is still ~7k lines after open-accent extract (`useTimedFlag`); world-reinforce flashes remain copy-paste — RF7.5 target ~2500 still open.
+- `schema.pg.ts` kept for deferred RF3.3; runtime `postgres.ts` client was unused and removed.
+- `public/models/brick-houses` and `public/models/kaykit` asset folders left on disk (GLBs unused; no scene mounts).
+- Next RF7.5 cut: data-driven walk-up tips + world-reinforce `armTimedFlag` wrappers.
 
 ## User request (2026-09-10)
 
@@ -1255,6 +1263,7 @@ Leftovers: brick pack church/lamppost/river; Japan stalls/tools; farm-pack trees
 
 ## Completed
 
+| CODE-CLEAN-1 Dead client paths + timed-flag | 2026-09-11 | Dropped unmounted components / unused API wrappers / `joinGuild` stub / dead `postgres.ts`; `useTimedFlag` for GameApp open accents; `timed-flag-rf75`, `code-cleanup` |
 | TREE-STUMP-1 Cooling stump matches trunk caliber | 2026-09-10 | `GatherDepletedStumpMesh` uses same flare/roots + trunk radii (`stumpRadiusBase` 0.22 vs old 0.65 barrel); `gather-ready-tree-visual` |
 | TREE-READY-1 Chop-ready wood nodes look like trees | 2026-09-04 | Leafy trunk+canopy while choppable (`GatherReadyTreeMesh` / `GATHER_READY_TREE`); cooling stays stump; label above canopy; `gather-ready-tree-visual` |
 | CTC-SWAP-TYPE-1 | Type swap API `swap` field | 2026-09-04 | `AuthActionResult` extra + `creditcoinSwapSuccessCueText`; `creditcoin-swap-cue` |
@@ -2056,6 +2065,7 @@ Leftovers: brick pack church/lamppost/river; Japan stalls/tools; farm-pack trees
 
 ---
 
+- 2026-09-11: **Code review + dead-path cleanup** — Removed unmounted `DeedPanel` / `KayKitAvatarModel` / `AvatarGltfRig` / `BrickHouseProp` / `HuntWildlifeHabitat` + orphan helpers; dropped unused client wrappers (`apiHunt`, `apiEatBread`, `apiConnectWallet`, `apiBuildStation`, `apiCreditcoinMarket`, deed mint/list/unlist) and deprecated `joinGuild`; deleted unused Postgres runtime client. GameApp open accents/confirms use `useTimedFlag` (RF7.5). Walk-up timers for stump/ore/crop/hunt now clear on unmount. Tests: `timed-flag-rf75`, `code-cleanup`. Next: world-reinforce + walk-up engine still in GameApp.
 - 2026-09-01: **`npm start` missing Next build** — `prestart` only built shared+server, so `next start` failed with no production `.next`. `prestart` now runs the full workspace `build`. Test: `package-scripts`.
 - 2026-08-28: **Interact lag (E stations/gather)** — Pressing E waited on a GameApp 500ms clock that re-reconciled the 3D scene, plus N+1 craft glances on every action. Live target + busy ref, SFX before applyState, HUD/scene clocks isolated, batched craft glances. Tests: `use-synced-now`, `craft-glance-from-jobs`, `panel-orchestration`.
 - 2026-08-28: **Traveler-chibi humanoid** — Pear robe, hooded head, stub limbs, satchel; matches low-poly traveler reference. Test: `humanoid-layout`.

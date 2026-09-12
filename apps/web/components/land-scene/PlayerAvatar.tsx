@@ -46,7 +46,7 @@ interface PlayerAvatarProps {
 }
 
 /**
- * Playable avatar — KayKit GLB when installed, kit fallback otherwise.
+ * Playable avatar — villager GLTF when installed, stylized kit fallback otherwise.
  */
 export function PlayerAvatar({
   onPosition,

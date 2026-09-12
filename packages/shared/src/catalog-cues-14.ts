@@ -56,7 +56,7 @@ export function cityNoticeBoardAtmosphereVsCivicPadContrast(): number {
 /**
  * Soft City deed-desk landmark cue leftover (PL165.1).
  * Quiet cool system slate haze/emissive on a civic atmosphere deed desk so the
- * wallet path (B / DeedPanel) reads in the hub — complements open accent PL55.2.
+ * wallet path (B / CreditcoinPanel) reads in the hub — complements open accent PL55.2.
  * Atmosphere prop only (no BuildingType / interact station); wallet path unchanged;
  * no combat / NFT power; mute ok.
  */

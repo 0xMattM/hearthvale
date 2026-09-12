@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   JAPAN_VILLAGE_FENCE_NATIVE_WIDTH,
   JAPAN_VILLAGE_PROPS,
+  japanVillageCrop,
   japanVillageFenceTiles,
   japanVillagePreloadUrls,
   japanVillageProp,
@@ -27,6 +28,16 @@ describe("japan village environment props", () => {
     expect(japanVillagePreloadUrls()).toHaveLength(
       Object.keys(JAPAN_VILLAGE_PROPS).length,
     );
+  });
+
+  it("maps planted crops to Japan Village produce (edge)", () => {
+    expect(japanVillageCrop("wheat", "sprout")?.file).toBe("Sprout.gltf");
+    expect(japanVillageCrop("corn", "ready")?.file).toBe("Corn.gltf");
+    expect(japanVillageCrop("potato", "growing")?.file).toBe("Potato.gltf");
+    expect(japanVillageCrop("herb", "ready")?.file).toBe("Carrot_Orange.gltf");
+    expect(japanVillageCrop("wheat", "ready")).toBeNull();
+    expect(japanVillageCrop("cotton", "growing")).toBeNull();
+    expect(japanVillageProp("corn").url).toContain("Corn.gltf");
   });
 
   it("tiles fence runs to fill kit lengths (edge)", () => {

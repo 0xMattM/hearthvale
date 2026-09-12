@@ -4,10 +4,8 @@ import type {
   BuildingDto,
   GuildRank,
   ItemId,
-  PlayerLandStationType,
   PlayerStateDto,
   StationId,
-  VisitLandDto,
 } from "@game/shared";
 import {
   CRAFT_COMPLETE_BENCH_FLASH,
@@ -27,13 +25,11 @@ import {
   isExploreLandKind,
   isWarriorLandKind,
   LIVE_COMBAT,
-  WORLD,
   isPlayerLandKind,
   isPlayerLandStationType,
   canPickupHomesteadBuilding,
   buildingTypeFromKitItemId,
   ITEMS,
-  newlyPlacedStationBuildingId,
   nextSlotExpansion,
   ORE_NODE,
   plantableSeedsFromInventory,
@@ -70,7 +66,6 @@ import {
   apiEquipGear,
   apiRepairTool,
   apiExpandLand,
-  apiBuildStation,
   apiPlaceStationKit,
   apiPickupStation,
   apiTravel,
@@ -138,6 +133,7 @@ import { useGameAuth } from "@/hooks/useGameAuth";
 import { useVisitLandState } from "@/hooks/useVisitLand";
 import { useEconomyPanels } from "@/hooks/useEconomyPanels";
 import { useSuccessCue } from "@/hooks/useSuccessCue";
+import { useTimedFlag } from "@/hooks/useTimedFlag";
 import { resolveSoftRefuseFlash } from "@/lib/hud/soft-refuse-flash";
 import { BuildPanel } from "@/components/hud/BuildPanel";
 import { ChatPanel, type ChatChannel } from "@/components/hud/ChatPanel";
@@ -321,9 +317,6 @@ import {
   toolBrokeSuccessCueText,
   huntEncounterSuccessCueText,
   deedClaimSuccessCueText,
-  deedMintSuccessCueText,
-  deedListSuccessCueText,
-  deedUnlistSuccessCueText,
   walletLinkSuccessCueText,
   walletDisconnectSuccessCueText,
   muteToggleSuccessCueText,
@@ -369,7 +362,6 @@ import {
 } from "@/lib/hud/chat-receive-ping";
 import {
   INVENTORY_OPEN_ACCENT_MS,
-  shouldPlayDeedOpenAccent,
   shouldPlayGuildMembershipOpenAccent,
   shouldPlayRealmMarketOpenAccent,
 } from "@/lib/hud/inventory-open-accent";
@@ -415,7 +407,6 @@ import {
 } from "@/lib/hud/workspace-panel-open-accent";
 import {
   SOCIAL_PANEL_OPEN_ACCENT_MS,
-  shouldPlayMailOpenAccent,
   shouldPlayNoticeOpenAccent,
   shouldPlayTutorialNpcOpenAccent,
 } from "@/lib/hud/social-panel-open-accent";
@@ -953,10 +944,10 @@ export function GameApp() {
   if (!audioRef.current) audioRef.current = createGameAudio();
   // Reason: PL27.2 — throttle chat receive pings across rapid socket lines.
   const chatReceivePingAtRef = useRef<number | null>(null);
-  const [mapChipArrivePulse, setMapChipArrivePulse] = useState(false);
-  const mapChipArrivePulseClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const {
+    on: mapChipArrivePulse,
+    flash: flashMapChipArrivePulse,
+  } = useTimedFlag(MAP_CHIP_ARRIVE_PULSE_MS);
   const [eatSuccessWorldReinforce, setEatSuccessWorldReinforce] =
     useState(false);
   const eatSuccessWorldReinforceClearRef = useRef<ReturnType<
@@ -1215,10 +1206,11 @@ export function GameApp() {
   const softWarDeliverWorldReinforceClearRef = useRef<ReturnType<
     typeof setTimeout
   > | null>(null);
-  const [inventoryOpenAccent, setInventoryOpenAccent] = useState(false);
-  const inventoryOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const {
+    on: inventoryOpenAccent,
+    flash: flashInventoryOpenAccent,
+    clear: clearInventoryOpenAccent,
+  } = useTimedFlag(INVENTORY_OPEN_ACCENT_MS);
   // Reason: PL128.2 — brief slot flash ids after bag inflow (gather/craft/buy).
   const [inventoryPickupFlashIds, setInventoryPickupFlashIds] = useState<
     string[]
@@ -1232,91 +1224,108 @@ export function GameApp() {
   const inventoryPickupIdleGlanceClearRef = useRef<ReturnType<
     typeof setTimeout
   > | null>(null);
-  const [vendorOpenAccent, setVendorOpenAccent] = useState(false);
-  const vendorOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [marketOpenAccent, setMarketOpenAccent] = useState(false);
-  const marketOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [buildOpenAccent, setBuildOpenAccent] = useState(false);
-  const buildOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [craftOpenAccent, setCraftOpenAccent] = useState(false);
-  const craftOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [travelOpenAccent, setTravelOpenAccent] = useState(false);
-  const travelOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [tradeOpenAccent, setTradeOpenAccent] = useState(false);
-  const tradeOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [questOpenAccent, setQuestOpenAccent] = useState(false);
-  const questOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [mailOpenAccent, setMailOpenAccent] = useState(false);
-  const mailOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [decorOpenAccent, setDecorOpenAccent] = useState(false);
-  const decorOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [noticeOpenAccent, setNoticeOpenAccent] = useState(false);
-  const noticeOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [chatOpenAccent, setChatOpenAccent] = useState(false);
-  const chatOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [settingsOpenAccent, setSettingsOpenAccent] = useState(false);
-  const settingsOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [muteEnableConfirm, setMuteEnableConfirm] = useState(false);
-  const muteEnableConfirmClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [dayNightEnableConfirm, setDayNightEnableConfirm] = useState(false);
-  const dayNightEnableConfirmClearRef = useRef<ReturnType<
-    typeof setTimeout
-  > | null>(null);
-  const [tipsEnableConfirm, setTipsEnableConfirm] = useState(false);
-  const tipsEnableConfirmClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [guildOpenAccent, setGuildOpenAccent] = useState(false);
-  const guildOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [guildMembershipOpenAccent, setGuildMembershipOpenAccent] =
-    useState(false);
-  const guildMembershipOpenAccentClearRef = useRef<ReturnType<
-    typeof setTimeout
-  > | null>(null);
-  const [achievementsOpenAccent, setAchievementsOpenAccent] = useState(false);
-  const achievementsOpenAccentClearRef = useRef<ReturnType<
-    typeof setTimeout
-  > | null>(null);
-  const [arenaOpenAccent, setArenaOpenAccent] = useState(false);
-  const arenaOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const [tutorialNpcOpenAccent, setTutorialNpcOpenAccent] = useState(false);
-  const tutorialNpcOpenAccentClearRef = useRef<ReturnType<
-    typeof setTimeout
-  > | null>(null);
-  const [deedOpenAccent, setDeedOpenAccent] = useState(false);
-  const deedOpenAccentClearRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const {
+    on: vendorOpenAccent,
+    flash: flashVendorOpenAccent,
+    clear: clearVendorOpenAccent,
+  } = useTimedFlag(ECONOMY_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: marketOpenAccent,
+    flash: flashMarketOpenAccent,
+    clear: clearMarketOpenAccent,
+  } = useTimedFlag(ECONOMY_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: buildOpenAccent,
+    flash: flashBuildOpenAccent,
+    clear: clearBuildOpenAccent,
+  } = useTimedFlag(WORKSPACE_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: craftOpenAccent,
+    flash: flashCraftOpenAccent,
+    clear: clearCraftOpenAccent,
+  } = useTimedFlag(WORKSPACE_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: travelOpenAccent,
+    flash: flashTravelOpenAccent,
+    clear: clearTravelOpenAccent,
+  } = useTimedFlag(WORKSPACE_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: tradeOpenAccent,
+    flash: flashTradeOpenAccent,
+    clear: clearTradeOpenAccent,
+  } = useTimedFlag(SOCIAL_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: questOpenAccent,
+    flash: flashQuestOpenAccent,
+    clear: clearQuestOpenAccent,
+  } = useTimedFlag(SOCIAL_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: mailOpenAccent,
+    flash: flashMailOpenAccent,
+    clear: clearMailOpenAccent,
+  } = useTimedFlag(SOCIAL_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: decorOpenAccent,
+    flash: flashDecorOpenAccent,
+    clear: clearDecorOpenAccent,
+  } = useTimedFlag(WORKSPACE_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: noticeOpenAccent,
+    flash: flashNoticeOpenAccent,
+    clear: clearNoticeOpenAccent,
+  } = useTimedFlag(SOCIAL_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: chatOpenAccent,
+    flash: flashChatOpenAccent,
+    clear: clearChatOpenAccent,
+  } = useTimedFlag(SOCIAL_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: settingsOpenAccent,
+    flash: flashSettingsOpenAccent,
+    clear: clearSettingsOpenAccent,
+  } = useTimedFlag(INVENTORY_OPEN_ACCENT_MS);
+  const {
+    on: muteEnableConfirm,
+    flash: flashMuteEnableConfirm,
+  } = useTimedFlag(MUTE_ENABLE_CONFIRM_MS);
+  const {
+    on: dayNightEnableConfirm,
+    flash: flashDayNightEnableConfirm,
+  } = useTimedFlag(DAY_NIGHT_ENABLE_CONFIRM_MS);
+  const {
+    on: tipsEnableConfirm,
+    flash: flashTipsEnableConfirm,
+  } = useTimedFlag(TIPS_ENABLE_CONFIRM_MS);
+  const {
+    on: guildOpenAccent,
+    flash: flashGuildOpenAccentBase,
+    clear: clearGuildOpenAccent,
+  } = useTimedFlag(INVENTORY_OPEN_ACCENT_MS);
+  const {
+    on: guildMembershipOpenAccent,
+    flash: flashGuildMembershipOpenAccent,
+    clear: clearGuildMembershipOpenAccent,
+  } = useTimedFlag(INVENTORY_OPEN_ACCENT_MS);
+  const {
+    on: achievementsOpenAccent,
+    flash: flashAchievementsOpenAccent,
+    clear: clearAchievementsOpenAccent,
+  } = useTimedFlag(INVENTORY_OPEN_ACCENT_MS);
+  const {
+    on: arenaOpenAccent,
+    flash: flashArenaOpenAccent,
+    clear: clearArenaOpenAccent,
+  } = useTimedFlag(WORKSPACE_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: tutorialNpcOpenAccent,
+    flash: flashTutorialNpcOpenAccent,
+    clear: clearTutorialNpcOpenAccent,
+  } = useTimedFlag(SOCIAL_PANEL_OPEN_ACCENT_MS);
+  const {
+    on: deedOpenAccent,
+    flash: flashDeedOpenAccent,
+    clear: clearDeedOpenAccent,
+  } = useTimedFlag(INVENTORY_OPEN_ACCENT_MS);
   const [creditcoinContracts, setCreditcoinContracts] = useState<{
     realmToken?: string | null;
     landNft?: string | null;
@@ -2236,353 +2245,26 @@ export function GameApp() {
   }, [craftStation]);
 
   /**
-   * Brief inventory header/border accent after hotkey open (PL9.2).
-   */
-  const flashInventoryOpenAccent = useCallback(() => {
-    if (inventoryOpenAccentClearRef.current) {
-      clearTimeout(inventoryOpenAccentClearRef.current);
-      inventoryOpenAccentClearRef.current = null;
-    }
-    setInventoryOpenAccent(true);
-    inventoryOpenAccentClearRef.current = setTimeout(() => {
-      setInventoryOpenAccent(false);
-      inventoryOpenAccentClearRef.current = null;
-    }, INVENTORY_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief vendor header/border accent after walk-up open (PL19.1).
-   */
-  const flashVendorOpenAccent = useCallback(() => {
-    if (vendorOpenAccentClearRef.current) {
-      clearTimeout(vendorOpenAccentClearRef.current);
-      vendorOpenAccentClearRef.current = null;
-    }
-    setVendorOpenAccent(true);
-    vendorOpenAccentClearRef.current = setTimeout(() => {
-      setVendorOpenAccent(false);
-      vendorOpenAccentClearRef.current = null;
-    }, ECONOMY_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief market header/border accent after board/hotkey open (PL19.2).
-   */
-  const flashMarketOpenAccent = useCallback(() => {
-    if (marketOpenAccentClearRef.current) {
-      clearTimeout(marketOpenAccentClearRef.current);
-      marketOpenAccentClearRef.current = null;
-    }
-    setMarketOpenAccent(true);
-    marketOpenAccentClearRef.current = setTimeout(() => {
-      setMarketOpenAccent(false);
-      marketOpenAccentClearRef.current = null;
-    }, ECONOMY_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Build Board header/border accent after walk-up open (PL24.1).
-   */
-  const flashBuildOpenAccent = useCallback(() => {
-    if (buildOpenAccentClearRef.current) {
-      clearTimeout(buildOpenAccentClearRef.current);
-      buildOpenAccentClearRef.current = null;
-    }
-    setBuildOpenAccent(true);
-    buildOpenAccentClearRef.current = setTimeout(() => {
-      setBuildOpenAccent(false);
-      buildOpenAccentClearRef.current = null;
-    }, WORKSPACE_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief craft station header/border accent after walk-up open (PL24.2).
-   */
-  const flashCraftOpenAccent = useCallback(() => {
-    if (craftOpenAccentClearRef.current) {
-      clearTimeout(craftOpenAccentClearRef.current);
-      craftOpenAccentClearRef.current = null;
-    }
-    setCraftOpenAccent(true);
-    craftOpenAccentClearRef.current = setTimeout(() => {
-      setCraftOpenAccent(false);
-      craftOpenAccentClearRef.current = null;
-    }, WORKSPACE_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Travel header/border accent after N / portal open (PL24.3 / PL144.2).
-   * Map-chip kinship flash (TravelPanel); destinations unchanged.
-   */
-  const flashTravelOpenAccent = useCallback(() => {
-    if (travelOpenAccentClearRef.current) {
-      clearTimeout(travelOpenAccentClearRef.current);
-      travelOpenAccentClearRef.current = null;
-    }
-    setTravelOpenAccent(true);
-    travelOpenAccentClearRef.current = setTimeout(() => {
-      setTravelOpenAccent(false);
-      travelOpenAccentClearRef.current = null;
-    }, WORKSPACE_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief TopBar map-chip pulse after successful free travel arrive (PL40.2).
-   */
-  const flashMapChipArrivePulse = useCallback(() => {
-    if (mapChipArrivePulseClearRef.current) {
-      clearTimeout(mapChipArrivePulseClearRef.current);
-      mapChipArrivePulseClearRef.current = null;
-    }
-    setMapChipArrivePulse(true);
-    mapChipArrivePulseClearRef.current = setTimeout(() => {
-      setMapChipArrivePulse(false);
-      mapChipArrivePulseClearRef.current = null;
-    }, MAP_CHIP_ARRIVE_PULSE_MS);
-  }, []);
-
-  /**
-   * Brief Trade header/border accent after T / invite review open (PL29.1).
-   */
-  const flashTradeOpenAccent = useCallback(() => {
-    if (tradeOpenAccentClearRef.current) {
-      clearTimeout(tradeOpenAccentClearRef.current);
-      tradeOpenAccentClearRef.current = null;
-    }
-    setTradeOpenAccent(true);
-    tradeOpenAccentClearRef.current = setTimeout(() => {
-      setTradeOpenAccent(false);
-      tradeOpenAccentClearRef.current = null;
-    }, SOCIAL_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Quest log header/border accent after Q open (PL29.2).
-   */
-  const flashQuestOpenAccent = useCallback(() => {
-    if (questOpenAccentClearRef.current) {
-      clearTimeout(questOpenAccentClearRef.current);
-      questOpenAccentClearRef.current = null;
-    }
-    setQuestOpenAccent(true);
-    questOpenAccentClearRef.current = setTimeout(() => {
-      setQuestOpenAccent(false);
-      questOpenAccentClearRef.current = null;
-    }, SOCIAL_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Mail header/border accent after L open (PL34.1).
-   */
-  const flashMailOpenAccent = useCallback(() => {
-    if (mailOpenAccentClearRef.current) {
-      clearTimeout(mailOpenAccentClearRef.current);
-      mailOpenAccentClearRef.current = null;
-    }
-    setMailOpenAccent(true);
-    mailOpenAccentClearRef.current = setTimeout(() => {
-      setMailOpenAccent(false);
-      mailOpenAccentClearRef.current = null;
-    }, SOCIAL_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Housing decor header/border accent after walk-up open (PL34.2).
-   */
-  const flashDecorOpenAccent = useCallback(() => {
-    if (decorOpenAccentClearRef.current) {
-      clearTimeout(decorOpenAccentClearRef.current);
-      decorOpenAccentClearRef.current = null;
-    }
-    setDecorOpenAccent(true);
-    decorOpenAccentClearRef.current = setTimeout(() => {
-      setDecorOpenAccent(false);
-      decorOpenAccentClearRef.current = null;
-    }, WORKSPACE_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Notice board header/border accent after walk-up open (PL34.3).
-   */
-  const flashNoticeOpenAccent = useCallback(() => {
-    if (noticeOpenAccentClearRef.current) {
-      clearTimeout(noticeOpenAccentClearRef.current);
-      noticeOpenAccentClearRef.current = null;
-    }
-    setNoticeOpenAccent(true);
-    noticeOpenAccentClearRef.current = setTimeout(() => {
-      setNoticeOpenAccent(false);
-      noticeOpenAccentClearRef.current = null;
-    }, SOCIAL_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Chat header/border accent after C open (PL38.1).
-   */
-  const flashChatOpenAccent = useCallback(() => {
-    if (chatOpenAccentClearRef.current) {
-      clearTimeout(chatOpenAccentClearRef.current);
-      chatOpenAccentClearRef.current = null;
-    }
-    setChatOpenAccent(true);
-    chatOpenAccentClearRef.current = setTimeout(() => {
-      setChatOpenAccent(false);
-      chatOpenAccentClearRef.current = null;
-    }, SOCIAL_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Settings header/border accent after H open (PL38.2).
-   */
-  const flashSettingsOpenAccent = useCallback(() => {
-    if (settingsOpenAccentClearRef.current) {
-      clearTimeout(settingsOpenAccentClearRef.current);
-      settingsOpenAccentClearRef.current = null;
-    }
-    setSettingsOpenAccent(true);
-    settingsOpenAccentClearRef.current = setTimeout(() => {
-      setSettingsOpenAccent(false);
-      settingsOpenAccentClearRef.current = null;
-    }, INVENTORY_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief mute-row visual confirm when enabling mute (PL125.2).
-   * Complements ephemeral Muted (PL37.2); unmute stays cue-only.
-   */
-  const flashMuteEnableConfirm = useCallback(() => {
-    if (muteEnableConfirmClearRef.current) {
-      clearTimeout(muteEnableConfirmClearRef.current);
-      muteEnableConfirmClearRef.current = null;
-    }
-    setMuteEnableConfirm(true);
-    muteEnableConfirmClearRef.current = setTimeout(() => {
-      setMuteEnableConfirm(false);
-      muteEnableConfirmClearRef.current = null;
-    }, MUTE_ENABLE_CONFIRM_MS);
-  }, []);
-
-  /**
-   * Brief day-night-row visual confirm when enabling cycle (PL130.1).
-   * Cycle still cosmetic; settings only.
-   */
-  const flashDayNightEnableConfirm = useCallback(() => {
-    if (dayNightEnableConfirmClearRef.current) {
-      clearTimeout(dayNightEnableConfirmClearRef.current);
-      dayNightEnableConfirmClearRef.current = null;
-    }
-    setDayNightEnableConfirm(true);
-    dayNightEnableConfirmClearRef.current = setTimeout(() => {
-      setDayNightEnableConfirm(false);
-      dayNightEnableConfirmClearRef.current = null;
-    }, DAY_NIGHT_ENABLE_CONFIRM_MS);
-  }, []);
-
-  /**
-   * Brief tips-row visual confirm when enabling onboarding tips (PL130.2).
-   * Tip ids / localStorage unchanged; settings only.
-   */
-  const flashTipsEnableConfirm = useCallback(() => {
-    if (tipsEnableConfirmClearRef.current) {
-      clearTimeout(tipsEnableConfirmClearRef.current);
-      tipsEnableConfirmClearRef.current = null;
-    }
-    setTipsEnableConfirm(true);
-    tipsEnableConfirmClearRef.current = setTimeout(() => {
-      setTipsEnableConfirm(false);
-      tipsEnableConfirmClearRef.current = null;
-    }, TIPS_ENABLE_CONFIRM_MS);
-  }, []);
-
-  /**
    * Brief Guild header/border accent after G open (PL46.1).
    * PL140.2 — membership-tinted accent when already in a guild.
    */
-  const flashGuildOpenAccent = useCallback((hasMembership = false) => {
-    if (guildOpenAccentClearRef.current) {
-      clearTimeout(guildOpenAccentClearRef.current);
-      guildOpenAccentClearRef.current = null;
-    }
-    if (guildMembershipOpenAccentClearRef.current) {
-      clearTimeout(guildMembershipOpenAccentClearRef.current);
-      guildMembershipOpenAccentClearRef.current = null;
-    }
-    if (hasMembership) {
-      setGuildOpenAccent(false);
-      setGuildMembershipOpenAccent(true);
-      guildMembershipOpenAccentClearRef.current = setTimeout(() => {
-        setGuildMembershipOpenAccent(false);
-        guildMembershipOpenAccentClearRef.current = null;
-      }, INVENTORY_OPEN_ACCENT_MS);
-      return;
-    }
-    setGuildMembershipOpenAccent(false);
-    setGuildOpenAccent(true);
-    guildOpenAccentClearRef.current = setTimeout(() => {
-      setGuildOpenAccent(false);
-      guildOpenAccentClearRef.current = null;
-    }, INVENTORY_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Achievements header/border accent after A open (PL46.2).
-   */
-  const flashAchievementsOpenAccent = useCallback(() => {
-    if (achievementsOpenAccentClearRef.current) {
-      clearTimeout(achievementsOpenAccentClearRef.current);
-      achievementsOpenAccentClearRef.current = null;
-    }
-    setAchievementsOpenAccent(true);
-    achievementsOpenAccentClearRef.current = setTimeout(() => {
-      setAchievementsOpenAccent(false);
-      achievementsOpenAccentClearRef.current = null;
-    }, INVENTORY_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Arena stub warm accent after plaque open (PL52.2).
-   */
-  const flashArenaOpenAccent = useCallback(() => {
-    if (arenaOpenAccentClearRef.current) {
-      clearTimeout(arenaOpenAccentClearRef.current);
-      arenaOpenAccentClearRef.current = null;
-    }
-    setArenaOpenAccent(true);
-    arenaOpenAccentClearRef.current = setTimeout(() => {
-      setArenaOpenAccent(false);
-      arenaOpenAccentClearRef.current = null;
-    }, WORKSPACE_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Tutor panel seafoam accent after walk-up open (PL55.1).
-   */
-  const flashTutorialNpcOpenAccent = useCallback(() => {
-    if (tutorialNpcOpenAccentClearRef.current) {
-      clearTimeout(tutorialNpcOpenAccentClearRef.current);
-      tutorialNpcOpenAccentClearRef.current = null;
-    }
-    setTutorialNpcOpenAccent(true);
-    tutorialNpcOpenAccentClearRef.current = setTimeout(() => {
-      setTutorialNpcOpenAccent(false);
-      tutorialNpcOpenAccentClearRef.current = null;
-    }, SOCIAL_PANEL_OPEN_ACCENT_MS);
-  }, []);
-
-  /**
-   * Brief Deed desk system accent after B open (PL55.2).
-   */
-  const flashDeedOpenAccent = useCallback(() => {
-    if (deedOpenAccentClearRef.current) {
-      clearTimeout(deedOpenAccentClearRef.current);
-      deedOpenAccentClearRef.current = null;
-    }
-    setDeedOpenAccent(true);
-    deedOpenAccentClearRef.current = setTimeout(() => {
-      setDeedOpenAccent(false);
-      deedOpenAccentClearRef.current = null;
-    }, INVENTORY_OPEN_ACCENT_MS);
-  }, []);
+  const flashGuildOpenAccent = useCallback(
+    (hasMembership = false) => {
+      if (hasMembership) {
+        clearGuildOpenAccent();
+        flashGuildMembershipOpenAccent();
+        return;
+      }
+      clearGuildMembershipOpenAccent();
+      flashGuildOpenAccentBase();
+    },
+    [
+      clearGuildMembershipOpenAccent,
+      clearGuildOpenAccent,
+      flashGuildMembershipOpenAccent,
+      flashGuildOpenAccentBase,
+    ],
+  );
 
   useEffect(() => {
     if (
@@ -3483,6 +3165,18 @@ export function GameApp() {
       if (animalPenWalkUpClearRef.current) {
         clearTimeout(animalPenWalkUpClearRef.current);
       }
+      if (treeStumpWalkUpClearRef.current) {
+        clearTimeout(treeStumpWalkUpClearRef.current);
+      }
+      if (oreNodeWalkUpClearRef.current) {
+        clearTimeout(oreNodeWalkUpClearRef.current);
+      }
+      if (cropPlotWalkUpClearRef.current) {
+        clearTimeout(cropPlotWalkUpClearRef.current);
+      }
+      if (huntTrailWalkUpClearRef.current) {
+        clearTimeout(huntTrailWalkUpClearRef.current);
+      }
       if (kitchenWalkUpClearRef.current) {
         clearTimeout(kitchenWalkUpClearRef.current);
       }
@@ -3515,9 +3209,6 @@ export function GameApp() {
       }
       if (claimNodeWalkUpClearRef.current) {
         clearTimeout(claimNodeWalkUpClearRef.current);
-      }
-      if (mapChipArrivePulseClearRef.current) {
-        clearTimeout(mapChipArrivePulseClearRef.current);
       }
       if (eatSuccessWorldReinforceClearRef.current) {
         clearTimeout(eatSuccessWorldReinforceClearRef.current);
@@ -3678,59 +3369,11 @@ export function GameApp() {
       if (softWarDeliverWorldReinforceClearRef.current) {
         clearTimeout(softWarDeliverWorldReinforceClearRef.current);
       }
-      if (inventoryOpenAccentClearRef.current) {
-        clearTimeout(inventoryOpenAccentClearRef.current);
-      }
       if (inventoryPickupFlashClearRef.current) {
         clearTimeout(inventoryPickupFlashClearRef.current);
       }
       if (inventoryPickupIdleGlanceClearRef.current) {
         clearTimeout(inventoryPickupIdleGlanceClearRef.current);
-      }
-      if (vendorOpenAccentClearRef.current) {
-        clearTimeout(vendorOpenAccentClearRef.current);
-      }
-      if (marketOpenAccentClearRef.current) {
-        clearTimeout(marketOpenAccentClearRef.current);
-      }
-      if (buildOpenAccentClearRef.current) {
-        clearTimeout(buildOpenAccentClearRef.current);
-      }
-      if (craftOpenAccentClearRef.current) {
-        clearTimeout(craftOpenAccentClearRef.current);
-      }
-      if (travelOpenAccentClearRef.current) {
-        clearTimeout(travelOpenAccentClearRef.current);
-      }
-      if (tradeOpenAccentClearRef.current) {
-        clearTimeout(tradeOpenAccentClearRef.current);
-      }
-      if (questOpenAccentClearRef.current) {
-        clearTimeout(questOpenAccentClearRef.current);
-      }
-      if (mailOpenAccentClearRef.current) {
-        clearTimeout(mailOpenAccentClearRef.current);
-      }
-      if (decorOpenAccentClearRef.current) {
-        clearTimeout(decorOpenAccentClearRef.current);
-      }
-      if (noticeOpenAccentClearRef.current) {
-        clearTimeout(noticeOpenAccentClearRef.current);
-      }
-      if (chatOpenAccentClearRef.current) {
-        clearTimeout(chatOpenAccentClearRef.current);
-      }
-      if (settingsOpenAccentClearRef.current) {
-        clearTimeout(settingsOpenAccentClearRef.current);
-      }
-      if (muteEnableConfirmClearRef.current) {
-        clearTimeout(muteEnableConfirmClearRef.current);
-      }
-      if (dayNightEnableConfirmClearRef.current) {
-        clearTimeout(dayNightEnableConfirmClearRef.current);
-      }
-      if (tipsEnableConfirmClearRef.current) {
-        clearTimeout(tipsEnableConfirmClearRef.current);
       }
       if (craftCompleteFlashClearRef.current) {
         clearTimeout(craftCompleteFlashClearRef.current);
@@ -3749,24 +3392,6 @@ export function GameApp() {
       }
       if (expandFieldFlashClearRef.current) {
         clearTimeout(expandFieldFlashClearRef.current);
-      }
-      if (guildOpenAccentClearRef.current) {
-        clearTimeout(guildOpenAccentClearRef.current);
-      }
-      if (guildMembershipOpenAccentClearRef.current) {
-        clearTimeout(guildMembershipOpenAccentClearRef.current);
-      }
-      if (achievementsOpenAccentClearRef.current) {
-        clearTimeout(achievementsOpenAccentClearRef.current);
-      }
-      if (arenaOpenAccentClearRef.current) {
-        clearTimeout(arenaOpenAccentClearRef.current);
-      }
-      if (tutorialNpcOpenAccentClearRef.current) {
-        clearTimeout(tutorialNpcOpenAccentClearRef.current);
-      }
-      if (deedOpenAccentClearRef.current) {
-        clearTimeout(deedOpenAccentClearRef.current);
       }
     };
   }, []);
@@ -5257,23 +4882,23 @@ export function GameApp() {
 
   const closePanelHotkey = useCallback(() => {
     setPanel(null);
-    setInventoryOpenAccent(false);
-    setVendorOpenAccent(false);
-    setMarketOpenAccent(false);
-    setBuildOpenAccent(false);
-    setCraftOpenAccent(false);
-    setTravelOpenAccent(false);
-    setTradeOpenAccent(false);
-    setQuestOpenAccent(false);
-    setMailOpenAccent(false);
-    setDecorOpenAccent(false);
-    setNoticeOpenAccent(false);
-    setChatOpenAccent(false);
-    setSettingsOpenAccent(false);
-    setGuildOpenAccent(false);
-    setGuildMembershipOpenAccent(false);
-    setAchievementsOpenAccent(false);
-    setArenaOpenAccent(false);
+    clearInventoryOpenAccent();
+    clearVendorOpenAccent();
+    clearMarketOpenAccent();
+    clearBuildOpenAccent();
+    clearCraftOpenAccent();
+    clearTravelOpenAccent();
+    clearTradeOpenAccent();
+    clearQuestOpenAccent();
+    clearMailOpenAccent();
+    clearDecorOpenAccent();
+    clearNoticeOpenAccent();
+    clearChatOpenAccent();
+    clearSettingsOpenAccent();
+    clearGuildOpenAccent();
+    clearGuildMembershipOpenAccent();
+    clearAchievementsOpenAccent();
+    clearArenaOpenAccent();
     setCraftStation(null);
     setCraftBuildingId(null);
     setPlantBuildingId(null);
@@ -5355,23 +4980,23 @@ export function GameApp() {
     });
     if (!walkAway.close) return;
     setPanel(null);
-    setVendorOpenAccent(false);
-    setMarketOpenAccent(false);
-    setBuildOpenAccent(false);
-    setCraftOpenAccent(false);
-    setTravelOpenAccent(false);
-    setTradeOpenAccent(false);
-    setQuestOpenAccent(false);
-    setMailOpenAccent(false);
-    setDecorOpenAccent(false);
-    setNoticeOpenAccent(false);
-    setChatOpenAccent(false);
-    setSettingsOpenAccent(false);
-    setGuildOpenAccent(false);
-    setGuildMembershipOpenAccent(false);
-    setAchievementsOpenAccent(false);
-    setTutorialNpcOpenAccent(false);
-    setDeedOpenAccent(false);
+    clearVendorOpenAccent();
+    clearMarketOpenAccent();
+    clearBuildOpenAccent();
+    clearCraftOpenAccent();
+    clearTravelOpenAccent();
+    clearTradeOpenAccent();
+    clearQuestOpenAccent();
+    clearMailOpenAccent();
+    clearDecorOpenAccent();
+    clearNoticeOpenAccent();
+    clearChatOpenAccent();
+    clearSettingsOpenAccent();
+    clearGuildOpenAccent();
+    clearGuildMembershipOpenAccent();
+    clearAchievementsOpenAccent();
+    clearTutorialNpcOpenAccent();
+    clearDeedOpenAccent();
     if (walkAway.clearCraft) {
       setCraftStation(null);
       setCraftBuildingId(null);
@@ -6016,7 +5641,7 @@ export function GameApp() {
           busy={busy}
           openAccent={travelOpenAccent}
           onClose={() => {
-            setTravelOpenAccent(false);
+            clearTravelOpenAccent();
             setPanel(null);
           }}
           onTravel={async (kind, landId, nft) => {
@@ -6140,7 +5765,7 @@ export function GameApp() {
             if (shouldPulseMapChipOnTravelArrive(true)) {
               flashMapChipArrivePulse();
             }
-            setTravelOpenAccent(false);
+            clearTravelOpenAccent();
             setPanel(null);
           }}
         />
@@ -6154,7 +5779,7 @@ export function GameApp() {
           onClose={() => {
             setPanel(null);
             setDecorBuildingId(null);
-            setDecorOpenAccent(false);
+            clearDecorOpenAccent();
           }}
           onPlace={async (decorId) => {
             setBusy(true);
@@ -6174,7 +5799,7 @@ export function GameApp() {
             flashDecorPlaceWorldReinforce(true);
             setPanel(null);
             setDecorBuildingId(null);
-            setDecorOpenAccent(false);
+            clearDecorOpenAccent();
           }}
         />
       ) : null}
@@ -6188,12 +5813,12 @@ export function GameApp() {
           openAccent={inventoryOpenAccent}
           pickupFlashStackIds={inventoryPickupFlashIds}
           onClose={() => {
-            setInventoryOpenAccent(false);
+            clearInventoryOpenAccent();
             setPanel(null);
           }}
           onPlaceKit={(inventoryId) => {
             setPanel(null);
-            setInventoryOpenAccent(false);
+            clearInventoryOpenAccent();
             setPlaceFacing(0);
             setPlacingKitInventoryId(inventoryId);
           }}
@@ -6270,7 +5895,7 @@ export function GameApp() {
           openAccent={craftOpenAccent}
           serverNow={state.serverNow}
           onClose={() => {
-            setCraftOpenAccent(false);
+            clearCraftOpenAccent();
             setPanel(null);
             setCraftStation(null);
             setCraftBuildingId(null);
@@ -6441,7 +6066,7 @@ export function GameApp() {
           busy={busy}
           openAccent={vendorOpenAccent}
           onClose={() => {
-            setVendorOpenAccent(false);
+            clearVendorOpenAccent();
             setPanel(null);
           }}
           onBuy={async (itemId, qty) => {
@@ -6500,7 +6125,7 @@ export function GameApp() {
           selectedBuildingId={landEditorSelectedId}
           placingKitInventoryId={placingKitInventoryId}
           onClose={() => {
-            setBuildOpenAccent(false);
+            clearBuildOpenAccent();
             setLandEditorSelectedId(null);
             setPanel(null);
           }}
@@ -6530,7 +6155,7 @@ export function GameApp() {
           busy={busy}
           openAccent={tradeOpenAccent}
           onClose={() => {
-            setTradeOpenAccent(false);
+            clearTradeOpenAccent();
             setPanel(null);
           }}
           onRefreshPlayers={() => {
@@ -6606,7 +6231,7 @@ export function GameApp() {
           authToken={token ?? ""}
           openAccent={marketOpenAccent}
           onClose={() => {
-            setMarketOpenAccent(false);
+            clearMarketOpenAccent();
             setMarketBoardId(null);
             setPanel(null);
           }}
@@ -6790,7 +6415,7 @@ export function GameApp() {
           busy={busy}
           contractAddresses={creditcoinContracts ?? undefined}
           onClose={() => {
-            setDeedOpenAccent(false);
+            clearDeedOpenAccent();
             setPanel(null);
           }}
           onConnectWallet={async () => {
@@ -6877,7 +6502,7 @@ export function GameApp() {
               audioRef.current?.playBgmArriveIdentityStinger(destKind);
             }
             flashSuccessCue("Arrived · NFT land");
-            setDeedOpenAccent(false);
+            clearDeedOpenAccent();
             setPanel(null);
           }}
           onMintLand={async (biome, size) => {
@@ -6966,7 +6591,7 @@ export function GameApp() {
           state={state}
           busy={busy}
           onClose={() => {
-            setMarketOpenAccent(false);
+            clearMarketOpenAccent();
             setRealmMarketId(null);
             setPanel(null);
           }}
@@ -7181,7 +6806,7 @@ export function GameApp() {
           busy={busy}
           openAccent={mailOpenAccent}
           onClose={() => {
-            setMailOpenAccent(false);
+            clearMailOpenAccent();
             setPanel(null);
           }}
           onRefresh={() => {
@@ -7244,7 +6869,7 @@ export function GameApp() {
           busy={busy}
           openAccent={achievementsOpenAccent}
           onClose={() => {
-            setAchievementsOpenAccent(false);
+            clearAchievementsOpenAccent();
             setPendingAchievementUnlocks(clearPendingAchievementUnlocks());
             setPanel(null);
           }}
@@ -7260,7 +6885,7 @@ export function GameApp() {
           busy={busy}
           openAccent={questOpenAccent}
           onClose={() => {
-            setQuestOpenAccent(false);
+            clearQuestOpenAccent();
             setPanel(null);
           }}
           onRefresh={() => {
@@ -7275,7 +6900,7 @@ export function GameApp() {
           busy={busy}
           openAccent={tutorialNpcOpenAccent}
           onClose={() => {
-            setTutorialNpcOpenAccent(false);
+            clearTutorialNpcOpenAccent();
             setPanel(null);
             setTutorialProfessionId(null);
             setTutorialNpc(null);
@@ -7317,7 +6942,7 @@ export function GameApp() {
         <ArenaStubPanel
           openAccent={arenaOpenAccent}
           onClose={() => {
-            setArenaOpenAccent(false);
+            clearArenaOpenAccent();
             setPanel(null);
           }}
           onOpenTravel={openTravelPanel}
@@ -7328,7 +6953,7 @@ export function GameApp() {
         <NoticeBoardPanel
           openAccent={noticeOpenAccent}
           onClose={() => {
-            setNoticeOpenAccent(false);
+            clearNoticeOpenAccent();
             setPanel(null);
           }}
           onOpenTravel={openTravelPanel}
@@ -7352,8 +6977,8 @@ export function GameApp() {
           membershipOpenAccent={guildMembershipOpenAccent}
           pendingInvites={pendingGuildInvites}
           onClose={() => {
-            setGuildOpenAccent(false);
-            setGuildMembershipOpenAccent(false);
+            clearGuildOpenAccent();
+            clearGuildMembershipOpenAccent();
             setPanel(null);
           }}
           onRefresh={() => {

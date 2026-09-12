@@ -603,7 +603,7 @@ export function CityEnvironment({
         />
       ))}
 
-      {/* Civic atmosphere deed desk — soft landmark pulse (PL165.1); B opens DeedPanel */}
+      {/* Civic atmosphere deed desk — soft landmark pulse (PL165.1); B opens CreditcoinPanel */}
       {deedDesk.show ? (
         <DeedDeskLandmark
           landmark={deedDesk}
@@ -848,7 +848,7 @@ function TutorLaneLandmark({
 
 /**
  * Soft cool system-slate haze/emissive on a civic atmosphere deed desk (PL165.1).
- * Visible hub cue for the B / DeedPanel wallet path — no BuildingType / E interact.
+ * Visible hub cue for the B / CreditcoinPanel wallet path — no BuildingType / E interact.
  * Complements open accent PL55.2; no combat / NFT power.
  */
 function DeedDeskLandmark({

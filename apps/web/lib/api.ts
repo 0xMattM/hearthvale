@@ -215,28 +215,6 @@ export function apiClaimNode(token: string, buildingId: string, pos: WorldPos) {
   }>;
 }
 
-export function apiHunt(token: string, buildingId: string, pos: WorldPos) {
-  return authJson(token, `/api/buildings/${buildingId}/hunt`, {
-    method: "POST",
-    body: JSON.stringify(pos),
-  }) as Promise<{
-    ok: boolean;
-    state?: PlayerStateDto;
-    error?: string;
-    encounter?: {
-      won: boolean;
-      foeName: string;
-      rounds: number;
-      leather: number;
-      meat: number;
-      tusks?: number;
-      toolBonus?: number;
-      downed?: boolean;
-      energyLost?: number;
-    };
-  }>;
-}
-
 export function apiCombatStart(
   token: string,
   buildingId: string,
@@ -333,10 +311,6 @@ export function apiCollectCraft(
     method: "POST",
     body: JSON.stringify({ buildingId, ...pos }),
   });
-}
-
-export function apiEatBread(token: string) {
-  return authJson(token, "/api/eat-bread", { method: "POST" });
 }
 
 export function apiEatFood(token: string, itemId: EdibleItemId) {
@@ -441,20 +415,6 @@ export function apiExpandLand(token: string, pos: WorldPos) {
   return authJson(token, "/api/land/expand", {
     method: "POST",
     body: JSON.stringify(pos),
-  });
-}
-
-/**
- * Places a profession station on player land near the build board (CL3.2 compat).
- */
-export function apiBuildStation(
-  token: string,
-  type: string,
-  pos: WorldPos,
-) {
-  return authJson(token, "/api/land/build", {
-    method: "POST",
-    body: JSON.stringify({ type, ...pos }),
   });
 }
 
@@ -782,10 +742,6 @@ export function apiCancelMail(token: string, mailId: string) {
   return authJson(token, `/api/mail/${mailId}/cancel`, { method: "POST" });
 }
 
-export function apiConnectWallet(token: string) {
-  return authJson(token, "/api/wallet/connect", { method: "POST" });
-}
-
 export function apiDisconnectWallet(token: string) {
   return authJson(token, "/api/wallet/disconnect", { method: "POST" });
 }
@@ -908,24 +864,6 @@ export async function apiCreditcoinEnterLand(
   return travel;
 }
 
-export async function apiCreditcoinMarket(token: string) {
-  const res = await fetch(`${API_URL}/api/creditcoin/market`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.json() as Promise<{
-    ok: boolean;
-    listings?: Array<{
-      id: string;
-      sellerUsername: string;
-      itemId: string;
-      qty: number;
-      priceRealm: string;
-      status: string;
-      mine: boolean;
-    }>;
-  }>;
-}
-
 export function apiCreditcoinListItem(
   token: string,
   itemId: string,
@@ -1005,21 +943,6 @@ export async function apiChainMarketplace() {
       source: "live_listing" | "catalog_floor";
     }>;
   }>;
-}
-
-export function apiMintDeed(token: string, deedId: string) {
-  return authJson(token, `/api/deeds/${deedId}/mint`, { method: "POST" });
-}
-
-export function apiListDeed(token: string, deedId: string, priceCoins: number) {
-  return authJson(token, `/api/deeds/${deedId}/list`, {
-    method: "POST",
-    body: JSON.stringify({ priceCoins }),
-  });
-}
-
-export function apiUnlistDeed(token: string, deedId: string) {
-  return authJson(token, `/api/deeds/${deedId}/unlist`, { method: "POST" });
 }
 
 export async function apiPostGuildChat(token: string, text: string) {

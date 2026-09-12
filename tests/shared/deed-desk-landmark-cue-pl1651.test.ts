@@ -18,7 +18,7 @@ import {
 /**
  * PL165.1 — Deed-desk soft landmark cue leftover.
  * Choice: add a civic atmosphere deed desk (no BuildingType) with quiet cool
- * system-slate haze/emissive on City so the B / DeedPanel wallet path reads in
+ * system-slate haze/emissive on City so the B / CreditcoinPanel wallet path reads in
  * the hub — complements open accent PL55.2; wallet path unchanged; no NFT combat.
  */
 describe("CityLands PL165.1 deed-desk soft landmark cue leftover", () => {

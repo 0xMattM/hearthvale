@@ -108,17 +108,6 @@ export function joinGuildByInvite(
 }
 
 /**
- * @deprecated Prefer joinGuildByInvite — kept for soft redirect errors.
- */
-export function joinGuild(userId: string, name: string): ActionResult {
-  void name;
-  const player = playerByUserId(userId);
-  if (!player) return { ok: false, error: ACTION_ERROR.playerMissing };
-  if (player.guildId) return { ok: false, error: ACTION_ERROR.guildAlreadyIn };
-  return { ok: false, error: ACTION_ERROR.guildInviteInvalid };
-}
-
-/**
  * Leaves the current guild; owner succession or dissolve when last member.
  */
 export function leaveGuild(userId: string): ActionResult {
