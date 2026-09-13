@@ -95,24 +95,66 @@ export async function ensureCreditcoinNetwork(
 }
 
 /**
- * Connects the wallet, switches to Creditcoin Testnet, and signs the link message.
+ * Returns the first EIP-1193 account, requesting permission only when needed.
+ *
+ * Args:
+ *   eth: Injected wallet provider.
+ *
+ * Returns:
+ *   Selected account address.
  */
-export async function connectAndSignCreditcoin(message: string): Promise<{
-  address: string;
-  signature: string;
-}> {
-  const eth = getEthereum();
-  const accounts = (await eth.request({
-    method: "eth_requestAccounts",
-  })) as string[];
+export async function requestWalletAccount(
+  eth: EthereumProvider,
+): Promise<string> {
+  let accounts: string[] = [];
+  try {
+    accounts = (await eth.request({ method: "eth_accounts" })) as string[];
+  } catch {
+    accounts = [];
+  }
+  if (!accounts[0]) {
+    accounts = (await eth.request({
+      method: "eth_requestAccounts",
+    })) as string[];
+  }
   const address = accounts[0];
   if (!address) throw new Error("No wallet account selected.");
-  await ensureCreditcoinNetwork();
+  return address;
+}
+
+/**
+ * Signs the wallet-link message without switching or adding a chain.
+ *
+ * Reason: `wallet_addEthereumChain` + `personal_sign` on preview hosts is the
+ * pattern MetaMask Blockaid flags as wallet-draining. Linking is EIP-191 only.
+ *
+ * Args:
+ *   eth: Injected wallet provider.
+ *   message: Exact challenge text the server will verify.
+ *
+ * Returns:
+ *   Address plus EIP-191 signature.
+ */
+export async function requestWalletLinkSignature(
+  eth: EthereumProvider,
+  message: string,
+): Promise<{ address: string; signature: string }> {
+  const address = await requestWalletAccount(eth);
   const signature = (await eth.request({
     method: "personal_sign",
     params: [message, address],
   })) as string;
   return { address, signature };
+}
+
+/**
+ * Connects the wallet and signs the link message (no chain switch).
+ */
+export async function connectAndSignCreditcoin(message: string): Promise<{
+  address: string;
+  signature: string;
+}> {
+  return requestWalletLinkSignature(getEthereum(), message);
 }
 
 /**

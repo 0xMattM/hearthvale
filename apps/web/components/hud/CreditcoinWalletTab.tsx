@@ -228,50 +228,56 @@ export function CreditcoinWalletTab({
             </div>
           </div>
         ) : (
-          <button
-            type="button"
-            className="creditcoin-panel__btn-primary"
-            disabled={busy}
-            onClick={onConnectWallet}
-          >
-            Connect MetaMask
-          </button>
+          <>
+            <button
+              type="button"
+              className="creditcoin-panel__btn-primary"
+              disabled={busy}
+              onClick={onConnectWallet}
+            >
+              Connect MetaMask
+            </button>
+            <p className="creditcoin-panel__hint">
+              Linking only signs a login message — MetaMask cannot move funds.
+              Add Creditcoin Testnet later with Use Creditcoin network.
+            </p>
+          </>
         )}
       </CreditcoinSection>
 
-      <CreditcoinSection
-        label="Send REALM"
-        hint="Transfer REALM to another wallet via MetaMask."
-      >
-        <div className="creditcoin-panel__row">
-          <input
-            type="text"
-            placeholder="0x…"
-            value={sendTo}
-            disabled={busy || !linked}
-            onChange={(e) => setSendTo(e.target.value)}
-            style={{ flex: 1, minWidth: 140, fontSize: "0.78rem" }}
-          />
-          <input
-            type="number"
-            min={1}
-            value={sendAmount}
-            disabled={busy || !linked}
-            onChange={(e) => setSendAmount(Number(e.target.value))}
-            style={{ width: 64 }}
-          />
-          <button
-            type="button"
-            className="creditcoin-panel__btn-primary"
-            disabled={
-              busy || !linked || !isEvmAddress(sendTo) || sendAmount < 1
-            }
-            onClick={() => onSendRealm(sendTo, sendAmount)}
-          >
-            Send
-          </button>
-        </div>
-      </CreditcoinSection>
+      {linked ? (
+        <CreditcoinSection
+          label="Send REALM"
+          hint="Transfer REALM to another wallet via MetaMask."
+        >
+          <div className="creditcoin-panel__row">
+            <input
+              type="text"
+              placeholder="0x…"
+              value={sendTo}
+              disabled={busy}
+              onChange={(e) => setSendTo(e.target.value)}
+              style={{ flex: 1, minWidth: 140, fontSize: "0.78rem" }}
+            />
+            <input
+              type="number"
+              min={1}
+              value={sendAmount}
+              disabled={busy}
+              onChange={(e) => setSendAmount(Number(e.target.value))}
+              style={{ width: 64 }}
+            />
+            <button
+              type="button"
+              className="creditcoin-panel__btn-primary"
+              disabled={busy || !isEvmAddress(sendTo) || sendAmount < 1}
+              onClick={() => onSendRealm(sendTo, sendAmount)}
+            >
+              Send
+            </button>
+          </div>
+        </CreditcoinSection>
+      ) : null}
     </>
   );
 }

@@ -31,6 +31,16 @@ describe("Creditcoin desk land buy gate", () => {
     expect(src).toContain("Connect MetaMask first");
   });
 
+  it("hides Send REALM until the wallet is linked (edge)", () => {
+    const src = deskSource();
+    const sendAt = src.indexOf('label="Send REALM"');
+    expect(sendAt).toBeGreaterThan(-1);
+    const guardAt = src.lastIndexOf("{linked ? (", sendAt);
+    expect(guardAt).toBeGreaterThan(-1);
+    expect(sendAt - guardAt).toBeLessThan(80);
+    expect(src).toContain("login message");
+  });
+
   it("does not enable land buy from a linked wallet alone (failure)", () => {
     const src = deskSource();
     expect(src).toContain("disabled={busy || !canBuyLand}");

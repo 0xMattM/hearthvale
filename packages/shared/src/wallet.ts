@@ -7,7 +7,7 @@ export const WALLET = {
   stubPrefix: "0xstub",
   /** Human-readable disclaimer. */
   disclaimer:
-    "Optional. Link MetaMask (or any EIP-1193 wallet) to Creditcoin Testnet. Ownership / REALM / lands only — never combat power. Play works without a wallet.",
+    "Optional. Connect MetaMask with a login signature (no funds). Switch to Creditcoin Testnet when you mint or send. Ownership / REALM / lands only — never combat power. Play works without a wallet.",
 } as const;
 
 /**

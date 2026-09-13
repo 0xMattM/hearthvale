@@ -119,7 +119,8 @@ export function CreditcoinPanel({
       />
 
       <p className="creditcoin-panel__lede">
-        1. Connect MetaMask on Creditcoin Testnet (tCTC = gas only). 2. Burn
+        1. Connect MetaMask (login signature only). Switch to Creditcoin
+        Testnet when you mint or send (tCTC = gas only). 2. Burn
         in-game {state.softCurrencyName} for REALM (10 coins = 1 REALM, minted
         to your wallet). 3. Buy a land NFT with REALM — never combat power.
         REALM listings are at the indigo stall.
